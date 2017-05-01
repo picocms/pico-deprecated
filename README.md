@@ -20,3 +20,5 @@ Usage
 -----
 
 The plugin tries to guess whether it needs to be enabled or not. Obviously guessing doesn't always work, so you might want to enable or disable the plugin manually by adding `PicoDeprecated.enabled: true` or `PicoDeprecated.enabled: false` to your `config/config.yml`.
+
+Please refer to [`FEATURES.md`](FEATURES.md) for a complete list of all characteristics `PicoDeprecated` restores.

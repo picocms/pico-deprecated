@@ -3,37 +3,13 @@
 /**
  * Maintain backward compatibility to older Pico releases
  *
- * This plugin exists for backward compatibility and is disabled by default.
- * It gets automatically enabled when a plugin which either doesn't implement
- * {@link PicoPluginInterface} (plugins for Pico 0.X) or define the
- * {@link PicoDeprecated::API_VERSION} (plugins for Pico 1.0) is loaded.
+ * `PicoDeprecated`'s purpose is to maintain backward compatibility to older
+ * versions of Pico, by re-introducing characteristics that were removed from
+ * Pico's core. It for example triggers old events (like the `before_render`
+ * event used before Pico 1.0) and reads config files that were written in
+ * PHP ({@path "config/config.php"}, used before Pico 2.0).
  *
- * The following deprecated events are triggered by this plugin:
- *
- * | Event               | ... triggers the deprecated event                         |
- * | ------------------- | --------------------------------------------------------- |
- * | onPluginsLoaded     | plugins_loaded()                                          |
- * | onConfigLoaded      | config_loaded($config)                                    |
- * | onRequestUrl        | request_url($url)                                         |
- * | onContentLoading    | before_load_content($file)                                |
- * | onContentLoaded     | after_load_content($file, $rawContent)                    |
- * | on404ContentLoading | before_404_load_content($file)                            |
- * | on404ContentLoaded  | after_404_load_content($file, $rawContent)                |
- * | onMetaHeaders       | before_read_file_meta($headers)                           |
- * | onMetaParsed        | file_meta($meta)                                          |
- * | onContentParsing    | before_parse_content($rawContent)                         |
- * | onContentParsed     | after_parse_content($content)                             |
- * | onContentParsed     | content_parsed($content)                                  |
- * | onSinglePageLoaded  | get_page_data($pages, $meta)                              |
- * | onPagesLoaded       | get_pages($pages, $currentPage, $previousPage, $nextPage) |
- * | onTwigRegistration  | before_twig_register()                                    |
- * | onPageRendering     | before_render($twigVariables, $twig, $templateName)       |
- * | onPageRendered      | after_render($output)                                     |
- *
- * Since Pico 2.0 the config is stored in `config/*.yml` files. This plugin
- * also tries to read {@path "config/config.php"} (Pico 1.0) and
- * {@path "config.php"} in Pico's root dir (Pico 0.X) and overwrites all
- * previously specified settings.
+ * {@see http://picocms.org/plugins/deprecated/} for a full list of features.
  *
  * @author  Daniel Rudolf
  * @link    http://picocms.org
