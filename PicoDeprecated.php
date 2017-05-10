@@ -9,6 +9,11 @@
  * event used before Pico 1.0) and reads config files that were written in
  * PHP ({@path "config/config.php"}, used before Pico 2.0).
  *
+ * `PicoDeprecated` is basically a mandatory plugin for all Pico installs.
+ * Without this plugin you can't use plugins which were written for other
+ * API versions than the one of Pico's core, even when there was just a
+ * absolutely insignificant change.
+ *
  * {@see http://picocms.org/plugins/deprecated/} for a full list of features.
  *
  * @author  Daniel Rudolf
@@ -19,82 +24,222 @@
 class PicoDeprecated extends AbstractPicoPlugin
 {
     /**
-     * This plugin is disabled by default
+     * API version used by this plugin
      *
-     * @see AbstractPicoPlugin::$enabled
+     * @var int
      */
-    protected $enabled = false;
+    const API_VERSION = 2;
+
+    /**
+     * API version of Pico 0.9 and earlier
+     *
+     * @var int
+     */
+    const API_VERSION_0_9 = 0;
+
+    /**
+     * API version of Pico 1.0
+     *
+     * @var int
+     */
+    const API_VERSION_1_0 = 1;
+
+    /**
+     * API version of Pico 2.0
+     *
+     * @var int
+     */
+    const API_VERSION_2_0 = 2;
+
+    /**
+     * Map of core events matching event signatures of older API versions
+     *
+     * @see PicoDeprecated::handleEvent()
+     * @var array
+     */
+    protected $eventAliases = array(
+        'onPluginsLoaded' => array(
+            array(self::API_VERSION_1_0, 'onPluginsLoaded')
+        ),
+        'onConfigLoaded' => array(
+            array(self::API_VERSION_0_9, 'config_loaded'),
+            array(self::API_VERSION_1_0, 'onConfigLoaded')
+        ),
+        'onRequestUrl' => array(
+            array(self::API_VERSION_0_9, 'request_url'),
+            array(self::API_VERSION_1_0, 'onRequestUrl')
+        ),
+        'onRequestFile' => array(
+            array(self::API_VERSION_1_0, 'onRequestFile')
+        ),
+        'onContentLoading' => array(
+            array(self::API_VERSION_0_9, 'before_load_content'),
+            array(self::API_VERSION_1_0, 'onContentLoading')
+        ),
+        'on404ContentLoading' => array(
+            array(self::API_VERSION_0_9, 'before_404_load_content'),
+            array(self::API_VERSION_1_0, 'on404ContentLoading')
+        ),
+        'on404ContentLoaded' => array(
+            array(self::API_VERSION_1_0, 'on404ContentLoaded')
+        ),
+        'onContentLoaded' => array(
+            array(self::API_VERSION_1_0, 'onContentLoaded')
+        ),
+        'onMetaHeaders' => array(
+            array(self::API_VERSION_0_9, 'before_read_file_meta'),
+            array(self::API_VERSION_1_0, 'onMetaHeaders')
+        ),
+        'onMetaParsing' => array(
+            array(self::API_VERSION_1_0, 'onMetaParsing')
+        ),
+        'onMetaParsed' => array(
+            array(self::API_VERSION_0_9, 'file_meta'),
+            array(self::API_VERSION_1_0, 'onMetaParsed')
+        ),
+        'onContentParsing' => array(
+            array(self::API_VERSION_0_9, 'before_parse_content'),
+            array(self::API_VERSION_1_0, 'onContentParsing')
+        ),
+        'onContentPrepared' => array(
+            array(self::API_VERSION_1_0, 'onContentPrepared')
+        ),
+        'onContentParsed' => array(
+            array(self::API_VERSION_0_9, 'content_parsed'),
+            array(self::API_VERSION_0_9, 'after_parse_content'),
+            array(self::API_VERSION_1_0, 'onContentParsed')
+        ),
+        'onPagesLoading' => array(
+            array(self::API_VERSION_1_0, 'onPagesLoading')
+        ),
+        'onSinglePageLoading' => array(
+            array(self::API_VERSION_1_0, 'onSinglePageLoading')
+        ),
+        'onSinglePageLoaded' => array(
+            array(self::API_VERSION_1_0, 'onSinglePageLoaded')
+        ),
+        'onPagesDiscovered' => array(),
+        'onPagesLoaded' => array(),
+        'onCurrentPageDiscovered' => array(),
+        'onPageRendering' => array(),
+        'onPageRendered' => array(
+            array(self::API_VERSION_0_9, 'after_render'),
+            array(self::API_VERSION_1_0, 'onPageRendered')
+        ),
+        'onYamlParserRegistered' => array(),
+        'onParsedownRegistered' => array(),
+        'onTwigRegistered' => array()
+    );
+
+    /**
+     * Loaded plugins, indexed by API version
+     *
+     * @see PicoDeprecated::onPluginsLoaded()
+     * @var array|null
+     */
+    protected $plugins;
 
     /**
      * The requested file
      *
-     * @see PicoDeprecated::getRequestFile()
+     * @see PicoDeprecated::onRequestFile()
      * @var string|null
      */
     protected $requestFile;
 
     /**
-     * Enables this plugin on demand and triggers the deprecated event
-     * plugins_loaded()
+     * List of known pages
      *
+     * @see PicoDeprecated::onPagesLoaded()
+     * @var array[]|null
+     */
+    protected $pages;
+
+    /**
+     * Twig instance used for template parsing
+     *
+     * @see PicoDeprecated::onTwigRegistration()
+     * @var Twig_Environment|null
+     */
+    protected $twig;
+
+    /**
+     * @see PicoPluginInterface::handleEvent()
+     */
+    public function handleEvent($eventName, array $params)
+    {
+        parent::handleEvent($eventName, $params);
+
+        if ($this->isEnabled()) {
+            if (isset($this->eventAliases[$eventName])) {
+                // trigger core events matching the event signatures of older API versions
+                foreach ($this->eventAliases[$eventName] as $eventAlias) {
+                    $this->triggerEvent($eventAlias[0], $eventAlias[1], $params);
+                }
+            } else {
+                // trigger custom events on plugins using API v1 and later
+                $this->triggerEvent(self::API_VERSION_1_0, $eventName, $params);
+            }
+        }
+    }
+
+    /**
+     * Reads all loaded plugins and indexes them by API level and triggers the
+     * deprecated API v0 event `plugins_loaded()`
+     *
+     * @see PicoDeprecated::$plugins
      * @see DummyPlugin::onPluginsLoaded()
      */
     public function onPluginsLoaded(array &$plugins)
     {
         if ($plugins) {
-            foreach ($plugins as $plugin) {
-                if (!($plugin instanceof PicoPluginInterface)) {
-                    // the plugin doesn't implement PicoPluginInterface; it uses deprecated events
-                    // enable PicoDeprecated if it hasn't be explicitly enabled/disabled yet
-                    if (!$this->isStatusChanged()) {
-                        $this->setEnabled(true, true, true);
+            foreach ($plugins as $pluginName => $plugin) {
+                $apiVersion = self::API_VERSION_0_9;
+                if ($plugin instanceof PicoPluginInterface) {
+                    if (defined($pluginName . '::API_VERSION')) {
+                        $apiVersion = $pluginName::API_VERSION;
+                    } else {
+                        $apiVersion = self::API_VERSION_1_0;
                     }
-                    break;
                 }
-            }
-        } else {
-            // no plugins were found, so it actually isn't necessary to call deprecated events
-            // anyway, this plugin also ensures compatibility apart from events used by old plugins,
-            // so enable PicoDeprecated if it hasn't be explicitly enabled/disabled yet
-            if (!$this->isStatusChanged()) {
-                $this->setEnabled(true, true, true);
+
+                // PicoDeprecated currently supports all previous API versions
+                $this->plugins[$apiVersion][$pluginName] = $plugin;
             }
         }
 
-        if ($this->isEnabled()) {
-            $this->triggerEvent('plugins_loaded');
-        }
+        $this->triggerEvent(self::API_VERSION_0_9, 'plugins_loaded');
     }
 
     /**
-     * Triggers the deprecated event config_loaded($config)
+     * Re-introduces various deprecated, config-related characteristics
      *
-     * This method also defines deprecated constants, reads the `config.php`
-     * in Pico's root dir, enables the plugins {@link PicoParsePagesContent}
-     * and {@link PicoExcerpt} and makes `$config` globally accessible (the
-     * latter was removed with Pico 0.9 and was added again as deprecated
-     * feature with Pico 1.0)
+     * 1. Define various deprecated, config-related constants
+     *    ({@see PicoDeprecated::defineConstants()})
+     * 2. Read `config.php` in Pico's config dir (`config/config.php`)
+     *    ({@see PicoDeprecated::loadScriptedConfig()})
+     * 3. Read `config.php` in Pico's root dir
+     *    ({@see PicoDeprecated::loadRootDirConfig()})
+     * 4. Define the global `$config` variable
      *
      * @see    PicoDeprecated::defineConstants()
      * @see    PicoDeprecated::loadRootDirConfig()
      * @see    PicoDeprecated::enablePlugins()
      * @see    DummyPlugin::onConfigLoaded()
-     * @param  array &$config array of config variables
-     * @return void
      */
     public function onConfigLoaded(array &$config)
     {
         $this->defineConstants();
         $this->loadScriptedConfig($config);
         $this->loadRootDirConfig($config);
-        $this->enablePlugins();
-        $GLOBALS['config'] = &$config;
 
-        $this->triggerEvent('config_loaded', array(&$config));
+        if (!isset($GLOBALS['config'])) {
+            $GLOBALS['config'] = &$config;
+        }
     }
 
     /**
-     * Defines deprecated constants
+     * Defines deprecated, config-related constants
      *
      * `ROOT_DIR`, `LIB_DIR`, `PLUGINS_DIR`, `THEMES_DIR` and `CONTENT_EXT`
      * are deprecated since v1.0, `CONTENT_DIR` existed just in v0.9,
@@ -131,7 +276,7 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Read config.php in Pico's config dir (i.e. config/config.php)
+     * Reads a config.php in Pico's config dir (i.e. config/config.php)
      *
      * @see    PicoDeprecated::onConfigLoaded()
      * @see    Pico::loadConfig()
@@ -178,7 +323,7 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Read config.php in Pico's root dir
+     * Reads a config.php in Pico's root dir
      *
      * @see    PicoDeprecated::onConfigLoaded()
      * @see    Pico::loadConfig()
@@ -216,46 +361,8 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Enables the plugins PicoParsePagesContent and PicoExcerpt
-     *
-     * @see    PicoParsePagesContent
-     * @see    PicoExcerpt
-     * @return void
-     */
-    protected function enablePlugins()
-    {
-        // enable PicoParsePagesContent and PicoExcerpt
-        // we can't enable them during onPluginsLoaded because we can't know
-        // if the user disabled us (PicoDeprecated) manually in the config
-        $plugins = $this->getPlugins();
-        if (isset($plugins['PicoParsePagesContent'])) {
-            // parse all pages content if this plugin hasn't
-            // be explicitly enabled/disabled yet
-            if (!$plugins['PicoParsePagesContent']->isStatusChanged()) {
-                $plugins['PicoParsePagesContent']->setEnabled(true, true, true);
-            }
-        }
-        if (isset($plugins['PicoExcerpt'])) {
-            // enable excerpt plugin if it hasn't be explicitly enabled/disabled yet
-            if (!$plugins['PicoExcerpt']->isStatusChanged()) {
-                $plugins['PicoExcerpt']->setEnabled(true, true, true);
-            }
-        }
-    }
-
-    /**
-     * Triggers the deprecated event request_url($url)
-     *
-     * @see DummyPlugin::onRequestUrl()
-     */
-    public function onRequestUrl(&$url)
-    {
-        $this->triggerEvent('request_url', array(&$url));
-    }
-
-    /**
-     * Sets PicoDeprecated::$requestFile to trigger the deprecated
-     * events after_load_content() and after_404_load_content()
+     * Sets PicoDeprecated::$requestFile to trigger the deprecated API v0
+     * events after_load_content(...) and after_404_load_content(...)
      *
      * @see PicoDeprecated::onContentLoaded()
      * @see PicoDeprecated::on404ContentLoaded()
@@ -267,214 +374,239 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Triggers the deprecated before_load_content($file)
-     *
-     * @see DummyPlugin::onContentLoading()
-     */
-    public function onContentLoading(&$file)
-    {
-        $this->triggerEvent('before_load_content', array(&$file));
-    }
-
-    /**
-     * Triggers the deprecated event after_load_content($file, $rawContent)
+     * Triggers the deprecated API v0 event
+     * after_load_content($file, $rawContent)
      *
      * @see DummyPlugin::onContentLoaded()
      */
     public function onContentLoaded(&$rawContent)
     {
-        $this->triggerEvent('after_load_content', array(&$this->requestFile, &$rawContent));
+        $this->triggerEvent(self::API_VERSION_0_9, 'after_load_content', array(&$this->requestFile, &$rawContent));
     }
 
     /**
-     * Triggers the deprecated before_404_load_content($file)
-     *
-     * @see DummyPlugin::on404ContentLoading()
-     */
-    public function on404ContentLoading(&$file)
-    {
-        $this->triggerEvent('before_404_load_content', array(&$file));
-    }
-
-    /**
-     * Triggers the deprecated event after_404_load_content($file, $rawContent)
+     * Triggers the deprecated API v0 event
+     * after_404_load_content($file, $rawContent)
      *
      * @see DummyPlugin::on404ContentLoaded()
      */
     public function on404ContentLoaded(&$rawContent)
     {
-        $this->triggerEvent('after_404_load_content', array(&$this->requestFile, &$rawContent));
+        $this->triggerEvent(self::API_VERSION_0_9, 'after_404_load_content', array(&$this->requestFile, &$rawContent));
     }
 
     /**
-     * Triggers the deprecated event before_read_file_meta($headers)
-     *
-     * @see DummyPlugin::onMetaHeaders()
-     */
-    public function onMetaHeaders(array &$headers)
-    {
-        $this->triggerEvent('before_read_file_meta', array(&$headers));
-    }
-
-    /**
-     * Triggers the deprecated event file_meta($meta)
-     *
-     * @see DummyPlugin::onMetaParsed()
-     */
-    public function onMetaParsed(array &$meta)
-    {
-        $this->triggerEvent('file_meta', array(&$meta));
-    }
-
-    /**
-     * Triggers the deprecated event before_parse_content($rawContent)
-     *
-     * @see DummyPlugin::onContentParsing()
-     */
-    public function onContentParsing(&$rawContent)
-    {
-        $this->triggerEvent('before_parse_content', array(&$rawContent));
-    }
-
-    /**
-     * Triggers the deprecated events after_parse_content($content) and
-     * content_parsed($content)
-     *
-     * @see DummyPlugin::onContentParsed()
-     */
-    public function onContentParsed(&$content)
-    {
-        $this->triggerEvent('after_parse_content', array(&$content));
-
-        // deprecated since v0.8
-        $this->triggerEvent('content_parsed', array(&$content));
-    }
-
-    /**
-     * Triggers the deprecated event get_page_data($pages, $meta)
+     * Triggers the deprecated API v0 event get_page_data($pages, $meta)
      *
      * @see DummyPlugin::onSinglePageLoaded()
      */
     public function onSinglePageLoaded(array &$pageData)
     {
-        $this->triggerEvent('get_page_data', array(&$pageData, $pageData['meta']));
+        $this->triggerEvent(self::API_VERSION_0_9, 'get_page_data', array(&$pageData, $pageData['meta']));
     }
 
     /**
-     * Triggers the deprecated event
-     * get_pages($pages, $currentPage, $previousPage, $nextPage)
+     * Sets PicoDeprecated::$pages to trigger the deprecated API v0 event
+     * get_pages(...) and the API v1 event onPagesLoaded(...)
+     *
+     * @see PicoDeprecated::onContentLoaded()
+     * @see PicoDeprecated::on404ContentLoaded()
+     * @see DummyPlugin::onRequestFile()
+     */
+    public function onPagesLoaded(array &$pages)
+    {
+        $this->pages = &$pages;
+    }
+
+    /**
+     * Triggers the deprecated API v0 event get_pages(...) and the API v1 event
+     * onPagesLoaded($pages, $currentPage, $previousPage, $nextPage)
      *
      * Please note that the `get_pages()` event gets `$pages` passed without a
      * array index. The index is rebuild later using either the `id` array key
-     * or is derived from the `url` array key. Duplicates are prevented by
+     * or is derived from the `url` array key. If it isn't possible to derive
+     * the array key, `~unknown` is being used. Duplicates are prevented by
      * adding `~dup` when necessary.
      *
      * @see DummyPlugin::onPagesLoaded()
      */
-    public function onPagesLoaded(
-        array &$pages,
+    public function onCurrentPageDiscovered(
         array &$currentPage = null,
         array &$previousPage = null,
         array &$nextPage = null
     ) {
-        // remove keys of pages array
-        $plainPages = array();
-        foreach ($pages as &$pageData) {
-            $plainPages[] = &$pageData;
-        }
-        unset($pageData);
-
-        $this->triggerEvent('get_pages', array(&$plainPages, &$currentPage, &$previousPage, &$nextPage));
-
-        // re-index pages array
-        $pages = array();
-        foreach ($plainPages as &$pageData) {
-            if (!isset($pageData['id'])) {
-                $urlPrefixLength = strlen($this->getBaseUrl()) + intval(!$this->isUrlRewritingEnabled());
-                $pageData['id'] = substr($pageData['url'], $urlPrefixLength);
+        // trigger API v0 event
+        if ($this->triggersApiEvents(self::API_VERSION_0_9)) {
+            // remove keys of pages array
+            $plainPages = array();
+            foreach ($this->pages as &$plainPageData) {
+                $plainPages[] = &$plainPageData;
             }
 
-            // prevent duplicates
-            $id = $pageData['id'];
-            for ($i = 1; isset($pages[$id]); $i++) {
-                $id = $pageData['id'] . '~dup' . $i;
-            }
+            // trigger event
+            $this->triggerEvent(
+                self::API_VERSION_0_9,
+                'get_pages',
+                array(&$plainPages, &$currentPage, &$previousPage, &$nextPage)
+            );
 
-            $pages[$id] = &$pageData;
+            // re-index pages array
+            $this->pages = array();
+            foreach ($plainPages as &$pageData) {
+                if (!isset($pageData['id'])) {
+                    $baseUrlLength = strlen($this->getBaseUrl());
+                    if (substr($pageData['url'], 0, $baseUrlLength) === $this->getBaseUrl()) {
+                        if ($this->isUrlRewritingEnabled() && (substr($pageData['url'], $baseUrlLength, 1) === '?')) {
+                            $pageData['id'] = substr($pageData['url'], $baseUrlLength + 1);
+                        } else {
+                            $pageData['id'] = substr($pageData['url'], $baseUrlLength);
+                        }
+                    } else {
+                        // foreign URLs lead to ~unknown, ~unknown~dup1, ~unknown~dup2, ...
+                        $pageData['id'] = '~unknown';
+                    }
+                }
+
+                // prevent duplicates
+                $id = $pageData['id'];
+                for ($i = 1; isset($this->pages[$id]); $i++) {
+                    $id = $pageData['id'] . '~dup' . $i;
+                }
+
+                $this->pages[$id] = &$pageData;
+            }
         }
+
+        // trigger API v1 event
+        $this->triggerEvent(
+            self::API_VERSION_1_0,
+            'onPagesLoaded',
+            array(&$this->pages, &$currentPage, &$previousPage, &$nextPage)
+        );
     }
 
     /**
-     * Triggers the deprecated event before_twig_register()
-     *
-     * @see DummyPlugin::onTwigRegistration()
-     */
-    public function onTwigRegistration()
-    {
-        $this->triggerEvent('before_twig_register');
-    }
-
-    /**
-     * Adds the deprecated variables rewrite_url and is_front_page, triggers
-     * the deprecated event before_render($twigVariables, $twig, $templateName)
+     * Adds the deprecated Twig template variables rewrite_url and
+     * is_front_page, triggers the deprecated API v0 event
+     * before_render($twigVariables, $twig, $templateName)
      *
      * Please note that the `before_render()` event gets `$templateName` passed
      * without its file extension. The file extension is later added again.
      *
      * @see DummyPlugin::onPageRendering()
      */
-    public function onPageRendering(Twig_Environment &$twig, array &$twigVariables, &$templateName)
+    public function onPageRendering(&$templateName, array &$twigVariables)
     {
         // rewrite_url and is_front_page are deprecated since Pico 2.0
         if (!isset($twigVariables['rewrite_url'])) {
             $twigVariables['rewrite_url'] = $this->isUrlRewritingEnabled();
         }
-
         if (!isset($twigVariables['is_front_page'])) {
             $frontPage = $this->getConfig('content_dir') . 'index' . $this->getConfig('content_ext');
             $twigVariables['is_front_page'] = ($this->getRequestFile() === $frontPage);
         }
 
-        // template name contains file extension since Pico 1.0
-        $fileExtension = '';
-        if (($fileExtensionPos = strrpos($templateName, '.')) !== false) {
-            $fileExtension = substr($templateName, $fileExtensionPos);
-            $templateName = substr($templateName, 0, $fileExtensionPos);
+        // trigger API v0 event
+        if ($this->triggersApiEvents(self::API_VERSION_0_9)) {
+            // template name contains file extension since Pico 1.0
+            $fileExtension = '';
+            if (($fileExtensionPos = strrpos($templateName, '.')) !== false) {
+                $fileExtension = substr($templateName, $fileExtensionPos);
+                $templateName = substr($templateName, 0, $fileExtensionPos);
+            }
+
+            // trigger event
+            $this->triggerEvent(
+                self::API_VERSION_0_9,
+                'before_render',
+                array(&$twigVariables, &$this->twig, &$templateName)
+            );
+
+            // add original file extension
+            // we assume that all templates of a theme use the same file extension
+            $templateName = $templateName . $fileExtension;
         }
 
-        $this->triggerEvent('before_render', array(&$twigVariables, &$twig, &$templateName));
-
-        // add original file extension
-        $templateName = $templateName . $fileExtension;
+        // trigger API v1 event
+        $this->triggerEvent(
+            self::API_VERSION_1_0,
+            'onPageRendering',
+            array(&$this->twig, &$twigVariables, &$templateName)
+        );
     }
 
     /**
-     * Triggers the deprecated event after_render($output)
+     * Sets PicoDeprecated::$twig to trigger the deprecated API v0 event
+     * before_render(...) and the API v1 event onPageRendering(...), also
+     * triggers the deprecated API v0 event before_twig_register() and the
+     * API v1 event onTwigRegistration()
      *
-     * @see DummyPlugin::onPageRendered()
+     * @see DummyPlugin::onTwigRegistered()
      */
-    public function onPageRendered(&$output)
+    public function onTwigRegistered(Twig_Environment &$twig)
     {
-        $this->triggerEvent('after_render', array(&$output));
+        $this->twig = $twig;
+
+        $this->triggerEvent(self::API_VERSION_0_9, 'before_twig_register');
+        $this->triggerEvent(self::API_VERSION_1_0, 'onTwigRegistration');
     }
 
     /**
-     * Triggers a deprecated event on all plugins
+     * Returns whether events of a particular API level are triggered or not
      *
-     * Deprecated events are also triggered on plugins which implement
-     * {@link PicoPluginInterface}. Please note that the methods are called
-     * directly and not through {@link PicoPluginInterface::handleEvent()}.
+     * @param  int     $apiVersion API version to check
+     * @return boolean TRUE if PicoDeprecated triggers events of this API level,
+     *     FALSE otherwise
+     */
+    public function triggersApiEvents($apiVersion)
+    {
+        return isset($this->plugins[$apiVersion]);
+    }
+
+    /**
+     * Triggers deprecated events on plugins of different API versions
      *
-     * @param  string $eventName event to trigger
-     * @param  array  $params    parameters to pass
+     * Please note that events of a specific API version are only triggered
+     * on plugins with this particular API version. Deprecated events of
+     * API v0 are also triggered on plugins using API v1.
+     *
+     * You can use this public method in other plugins to trigger custom events
+     * on plugins using a particular API version. If you want to trigger a
+     * custom event on all plugins, no matter their API version (except for
+     * plugins using API v0), use {@see Pico::triggerEvent()} instead.
+     *
+     * @see    Pico::triggerEvent()
+     * @param  int    $apiVersion API version of the event
+     * @param  string $eventName  event to trigger
+     * @param  array  $params     parameters to pass
      * @return void
      */
-    protected function triggerEvent($eventName, array $params = array())
+    public function triggerEvent($apiVersion, $eventName, array $params = array())
     {
-        foreach ($this->getPlugins() as $plugin) {
-            if (method_exists($plugin, $eventName)) {
-                call_user_func_array(array($plugin, $eventName), $params);
+        if (!isset($this->plugins[$apiVersion])) {
+            return;
+        }
+
+        // API v0
+        if ($apiVersion === self::API_VERSION_0_9) {
+            // API v0 events are also triggered on plugins using API v1 (but not later)
+            $plugins = $this->plugins[self::API_VERSION_0_9];
+            if (isset($this->plugins[self::API_VERSION_1_0])) {
+                $plugins = array_merge($plugins, $this->plugins[self::API_VERSION_1_0]);
             }
+
+            foreach ($plugins as $plugin) {
+                if (method_exists($plugin, $eventName)) {
+                    call_user_func_array(array($plugin, $eventName), $params);
+                }
+            }
+
+            return;
+        }
+
+        // API v1 and later
+        foreach ($this->plugins[$apiVersion] as $plugin) {
+            $plugin->handleEvent($eventName, $params);
         }
     }
 }
