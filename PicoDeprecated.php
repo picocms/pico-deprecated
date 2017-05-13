@@ -58,9 +58,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      * @var array
      */
     protected $eventAliases = array(
-        'onPluginsLoaded' => array(
-            array(self::API_VERSION_1_0, 'onPluginsLoaded')
-        ),
+        'onPluginsLoaded' => array(),
         'onSinglePluginLoaded' => array(),
         'onConfigLoaded' => array(
             array(self::API_VERSION_0_9, 'config_loaded'),
@@ -185,21 +183,26 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Reads all loaded plugins and indexes them by API level and triggers the
-     * deprecated API v0 event `plugins_loaded()`
+     * Reads all loaded plugins and indexes them by API level, triggers the
+     * deprecated API v0 event plugins_loaded() and the API v1 event
+     * onPluginsLoaded($plugins)
+     *
+     * Please note that the API v1 event `onPluginsLoaded()` originally passed
+     * the `$plugins` array by reference. This isn't the case anymore since
+     * Pico 2.0. This is a BC-breaking change! The parameter is still passed
+     * by reference, but changing it doesn't affect anything.
      *
      * @see PicoDeprecated::loadPlugin()
      * @see DummyPlugin::onPluginsLoaded()
      */
     public function onPluginsLoaded(array $plugins)
     {
-        if ($plugins) {
-            foreach ($plugins as $plugin) {
-                $this->loadPlugin($plugin);
-            }
+        foreach ($plugins as $plugin) {
+            $this->loadPlugin($plugin);
         }
 
         $this->triggerEvent(self::API_VERSION_0_9, 'plugins_loaded');
+        $this->triggerEvent(self::API_VERSION_1_0, 'onPluginsLoaded', array(&$plugins));
     }
 
     /**
