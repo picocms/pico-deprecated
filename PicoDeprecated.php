@@ -61,6 +61,7 @@ class PicoDeprecated extends AbstractPicoPlugin
         'onPluginsLoaded' => array(
             array(self::API_VERSION_1_0, 'onPluginsLoaded')
         ),
+        'onSinglePluginLoaded' => array(),
         'onConfigLoaded' => array(
             array(self::API_VERSION_0_9, 'config_loaded'),
             array(self::API_VERSION_1_0, 'onConfigLoaded')
@@ -187,28 +188,58 @@ class PicoDeprecated extends AbstractPicoPlugin
      * Reads all loaded plugins and indexes them by API level and triggers the
      * deprecated API v0 event `plugins_loaded()`
      *
-     * @see PicoDeprecated::$plugins
+     * @see PicoDeprecated::loadPlugin()
      * @see DummyPlugin::onPluginsLoaded()
      */
-    public function onPluginsLoaded(array &$plugins)
+    public function onPluginsLoaded(array $plugins)
     {
         if ($plugins) {
-            foreach ($plugins as $pluginName => $plugin) {
-                $apiVersion = self::API_VERSION_0_9;
-                if ($plugin instanceof PicoPluginInterface) {
-                    if (defined($pluginName . '::API_VERSION')) {
-                        $apiVersion = $pluginName::API_VERSION;
-                    } else {
-                        $apiVersion = self::API_VERSION_1_0;
-                    }
-                }
-
-                // PicoDeprecated currently supports all previous API versions
-                $this->plugins[$apiVersion][$pluginName] = $plugin;
+            foreach ($plugins as $plugin) {
+                $this->loadPlugin($plugin);
             }
         }
 
         $this->triggerEvent(self::API_VERSION_0_9, 'plugins_loaded');
+    }
+
+    /**
+     * Adds a manually loaded plugin to PicoDeprecated's plugin index
+     *
+     * @see PicoDeprecated::loadPlugin()
+     * @see DummyPlugin::onPluginManuallyLoaded()
+     */
+    public function onPluginManuallyLoaded($plugin)
+    {
+        $this->loadPlugin($plugin);
+    }
+
+    /**
+     * Adds a plugin to PicoDeprecated's plugin index to trigger deprecated
+     * events by API level
+     *
+     * @see PicoDeprecated::$plugins
+     * @see PicoDeprecated::onPluginsLoaded()
+     * @see PicoDeprecated::onPluginManuallyLoaded()
+     * @param  object $plugin loaded plugin instance
+     * @return void
+     */
+    protected function loadPlugin($plugin)
+    {
+        $pluginName = get_class($plugin);
+
+        $apiVersion = self::API_VERSION_0_9;
+        if ($plugin instanceof PicoPluginInterface) {
+            if (defined($pluginName . '::API_VERSION')) {
+                $apiVersion = $pluginName::API_VERSION;
+            } else {
+                $apiVersion = self::API_VERSION_1_0;
+            }
+        }
+
+        if (!isset($this->plugins[$apiVersion][$pluginName])) {
+            // PicoDeprecated currently supports all previous API versions
+            $this->plugins[$apiVersion][$pluginName] = $plugin;
+        }
     }
 
     /**
