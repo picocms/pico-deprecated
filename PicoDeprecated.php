@@ -85,13 +85,7 @@ class PicoDeprecated extends AbstractPicoPlugin
         'onContentLoaded' => array(
             array(self::API_VERSION_1_0, 'onContentLoaded')
         ),
-        'onMetaHeaders' => array(
-            array(self::API_VERSION_0_9, 'before_read_file_meta'),
-            array(self::API_VERSION_1_0, 'onMetaHeaders')
-        ),
-        'onMetaParsing' => array(
-            array(self::API_VERSION_1_0, 'onMetaParsing')
-        ),
+        'onMetaParsing' => array(),
         'onMetaParsed' => array(
             array(self::API_VERSION_0_9, 'file_meta'),
             array(self::API_VERSION_1_0, 'onMetaParsed')
@@ -114,6 +108,7 @@ class PicoDeprecated extends AbstractPicoPlugin
         'onSinglePageLoading' => array(
             array(self::API_VERSION_1_0, 'onSinglePageLoading')
         ),
+        'onSinglePageContent' => array(),
         'onSinglePageLoaded' => array(
             array(self::API_VERSION_1_0, 'onSinglePageLoaded')
         ),
@@ -124,6 +119,9 @@ class PicoDeprecated extends AbstractPicoPlugin
         'onPageRendered' => array(
             array(self::API_VERSION_0_9, 'after_render'),
             array(self::API_VERSION_1_0, 'onPageRendered')
+        ),
+        'onMetaHeaders' => array(
+            array(self::API_VERSION_1_0, 'onMetaHeaders')
         ),
         'onYamlParserRegistered' => array(),
         'onParsedownRegistered' => array(),
@@ -145,6 +143,14 @@ class PicoDeprecated extends AbstractPicoPlugin
      * @var string|null
      */
     protected $requestFile;
+
+    /**
+     * List of known meta headers
+     *
+     * @see PicoDeprecated::onMetaHeaders()
+     * @var string[]|null
+     */
+    protected $metaHeaders;
 
     /**
      * List of known pages
@@ -430,6 +436,21 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
+     * Triggers the deprecated API v0 event before_read_file_meta($metaHeaders)
+     * and the API v1 event onMetaParsing($rawContent, $metaHeaders)
+     *
+     * @see DummyPlugin::onMetaParsing()
+     */
+    public function onMetaParsing(&$rawContent)
+    {
+        // make sure to trigger the onMetaHeaders event
+        $this->getMetaHeaders();
+
+        $this->triggerEvent(self::API_VERSION_0_9, 'before_read_file_meta', array(&$this->metaHeaders));
+        $this->triggerEvent(self::API_VERSION_1_0, 'onMetaParsing', array(&$rawContent, &$this->metaHeaders));
+    }
+
+    /**
      * Triggers the deprecated API v0 event get_page_data($pages, $meta)
      *
      * @see DummyPlugin::onSinglePageLoaded()
@@ -540,6 +561,9 @@ class PicoDeprecated extends AbstractPicoPlugin
             $twigVariables['is_front_page'] = ($this->getRequestFile() === $frontPage);
         }
 
+        // make sure to trigger the onTwigRegistered event
+        $this->getTwig();
+
         // trigger API v0 event
         if ($this->triggersApiEvents(self::API_VERSION_0_9)) {
             // template name contains file extension since Pico 1.0
@@ -567,6 +591,18 @@ class PicoDeprecated extends AbstractPicoPlugin
             'onPageRendering',
             array(&$this->twig, &$twigVariables, &$templateName)
         );
+    }
+
+    /**
+     * Sets PicoDeprecated::$metaHeaders to trigger the deprecated API v1 event
+     * onMetaParsing(...)
+     *
+     * @see PicoDeprecated::onMetaParsing()
+     * @see DummyPlugin::onMetaHeaders()
+     */
+    public function onMetaHeaders(array &$headers)
+    {
+        $this->metaHeaders = &$headers;
     }
 
     /**
