@@ -59,7 +59,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      */
     protected $eventAliases = array(
         'onPluginsLoaded' => array(),
-        'onSinglePluginLoaded' => array(),
+        'onPluginManuallyLoaded' => array(),
         'onConfigLoaded' => array(
             array(self::API_VERSION_0_9, 'config_loaded'),
             array(self::API_VERSION_1_0, 'onConfigLoaded')
