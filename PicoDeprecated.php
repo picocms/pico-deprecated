@@ -81,14 +81,8 @@ class PicoDeprecated extends AbstractPicoPlugin
         'onRequestFile' => array(
             array(self::API_VERSION_1_0, 'onRequestFile')
         ),
-        'onContentLoading' => array(
-            array(self::API_VERSION_0_9, 'before_load_content'),
-            array(self::API_VERSION_1_0, 'onContentLoading')
-        ),
-        'on404ContentLoading' => array(
-            array(self::API_VERSION_0_9, 'before_404_load_content'),
-            array(self::API_VERSION_1_0, 'on404ContentLoading')
-        ),
+        'onContentLoading' => array(),
+        'on404ContentLoading' => array(),
         'on404ContentLoaded' => array(
             array(self::API_VERSION_1_0, 'on404ContentLoaded')
         ),
@@ -100,10 +94,7 @@ class PicoDeprecated extends AbstractPicoPlugin
             array(self::API_VERSION_0_9, 'file_meta'),
             array(self::API_VERSION_1_0, 'onMetaParsed')
         ),
-        'onContentParsing' => array(
-            array(self::API_VERSION_0_9, 'before_parse_content'),
-            array(self::API_VERSION_1_0, 'onContentParsing')
-        ),
+        'onContentParsing' => array(),
         'onContentPrepared' => array(
             array(self::API_VERSION_1_0, 'onContentPrepared')
         ),
@@ -153,6 +144,14 @@ class PicoDeprecated extends AbstractPicoPlugin
      * @var string|null
      */
     protected $requestFile;
+
+    /**
+     * Raw, not yet parsed contents to serve
+     *
+     * @see self::onContentLoaded()
+     * @var string|null
+     */
+    protected $rawContent;
 
     /**
      * List of known meta headers
@@ -422,14 +421,43 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Triggers API v0 event after_load_content($file, $rawContent)
+     * Triggers API v0 event before_load_content($file) and
+     * API v1 event onContentLoading($file)
+     *
+     * @see self::onRequestFile()
+     * @see DummyPlugin::onContentLoading()
+     */
+    public function onContentLoading()
+    {
+        $this->triggerEvent(self::API_VERSION_0_9, 'before_load_content', array(&$this->requestFile));
+        $this->triggerEvent(self::API_VERSION_1_0, 'onContentLoading', array(&$this->requestFile));
+    }
+
+    /**
+     * Triggers API v0 event after_load_content($file, $rawContent) and
+     * sets self::$rawContent
      *
      * @see self::onRequestFile()
      * @see DummyPlugin::onContentLoaded()
      */
     public function onContentLoaded(&$rawContent)
     {
+        $this->rawContent = &$rawContent;
+
         $this->triggerEvent(self::API_VERSION_0_9, 'after_load_content', array(&$this->requestFile, &$rawContent));
+    }
+
+    /**
+     * Triggers API v0 event before_404_load_content($file) and
+     * API v1 event on404ContentLoading($file)
+     *
+     * @see self::onRequestFile()
+     * @see DummyPlugin::on404ContentLoading()
+     */
+    public function on404ContentLoading()
+    {
+        $this->triggerEvent(self::API_VERSION_0_9, 'before_404_load_content', array(&$this->requestFile));
+        $this->triggerEvent(self::API_VERSION_1_0, 'on404ContentLoading', array(&$this->requestFile));
     }
 
     /**
@@ -448,15 +476,29 @@ class PicoDeprecated extends AbstractPicoPlugin
      * API v1 event onMetaParsing($rawContent, $metaHeaders)
      *
      * @see self::onMetaHeaders()
+     * @see self::onContentLoaded()
      * @see DummyPlugin::onMetaParsing()
      */
-    public function onMetaParsing(&$rawContent)
+    public function onMetaParsing()
     {
         // make sure to trigger the onMetaHeaders event
         $this->getMetaHeaders();
 
         $this->triggerEvent(self::API_VERSION_0_9, 'before_read_file_meta', array(&$this->metaHeaders));
-        $this->triggerEvent(self::API_VERSION_1_0, 'onMetaParsing', array(&$rawContent, &$this->metaHeaders));
+        $this->triggerEvent(self::API_VERSION_1_0, 'onMetaParsing', array(&$this->rawContent, &$this->metaHeaders));
+    }
+
+    /**
+     * Triggers API v0 event before_parse_content($rawContent) and
+     * API v1 event onContentParsing($rawContent)
+     *
+     * @see self::onContentLoaded()
+     * @see DummyPlugin::onContentParsing()
+     */
+    public function onContentParsing()
+    {
+        $this->triggerEvent(self::API_VERSION_0_9, 'before_parse_content', array(&$this->rawContent));
+        $this->triggerEvent(self::API_VERSION_1_0, 'onContentParsing', array(&$this->rawContent));
     }
 
     /**
