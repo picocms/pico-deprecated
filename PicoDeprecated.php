@@ -121,9 +121,7 @@ class PicoDeprecated extends AbstractPicoPlugin
             array(self::API_VERSION_0_9, 'after_render'),
             array(self::API_VERSION_1_0, 'onPageRendered')
         ),
-        'onMetaHeaders' => array(
-            array(self::API_VERSION_1_0, 'onMetaHeaders')
-        ),
+        'onMetaHeaders' => array(),
         'onYamlParserRegistered' => array(),
         'onParsedownRegistered' => array(),
         'onTwigRegistered' => array()
@@ -484,8 +482,25 @@ class PicoDeprecated extends AbstractPicoPlugin
         // make sure to trigger the onMetaHeaders event
         $this->getMetaHeaders();
 
-        $this->triggerEvent(self::API_VERSION_0_9, 'before_read_file_meta', array(&$this->metaHeaders));
-        $this->triggerEvent(self::API_VERSION_1_0, 'onMetaParsing', array(&$this->rawContent, &$this->metaHeaders));
+        if ($this->triggersApiEvents(self::API_VERSION_0_9, self::API_VERSION_1_0)) {
+            $headersFlipped = array_flip($this->metaHeaders);
+
+            $this->triggerEvent(self::API_VERSION_0_9, 'before_read_file_meta', array(&$headersFlipped));
+            $this->triggerEvent(self::API_VERSION_1_0, 'onMetaParsing', array(&$this->rawContent, &$headersFlipped));
+
+            $this->updateFlippedMetaHeaders($headersFlipped);
+        }
+    }
+
+    /**
+     * Lowers the page's meta headers as with Pico 1.0 and older
+     *
+     * @see self::lowerFileMeta()
+     * @see DummyPlugin::onMetaParsed()
+     */
+    public function onMetaParsed(array &$meta)
+    {
+        $this->lowerFileMeta($meta);
     }
 
     /**
@@ -502,12 +517,21 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Triggers API v0 event get_page_data($pages, $meta)
+     * Triggers API v0 event get_page_data($pages, $meta) and lowers the page's
+     * meta headers as with Pico 1.0 and older
      *
+     * @see self::lowerFileMeta()
      * @see DummyPlugin::onSinglePageLoaded()
      */
     public function onSinglePageLoaded(array &$pageData)
     {
+        // don't lower the file meta of the requested page,
+        // it was already lowered during the onMetaParsed event
+        $pageFile = $this->getConfig('content_dir') . $pageData['id'] . $this->getConfig('content_ext');
+        if ($pageFile !== $this->getRequestFile()) {
+            $this->lowerFileMeta($pageData['meta']);
+        }
+
         $this->triggerEvent(self::API_VERSION_0_9, 'get_page_data', array(&$pageData, $pageData['meta']));
     }
 
@@ -643,13 +667,89 @@ class PicoDeprecated extends AbstractPicoPlugin
     }
 
     /**
-     * Sets self::$metaHeaders
+     * Triggers the API v1 event onMetaHeaders($headers) and sets
+     * self::$metaHeaders
+     *
+     * Pico 1.0 and older was using the values of the meta headers array to
+     * match registered meta headers in a page's meta data, and used the keys
+     * of the meta headers array to store the meta value in the page's meta
+     * data. However, starting with Pico 2.0 it is the other way round. This
+     * allows us to specify multiple "search strings" for a single registered
+     * meta value (e.g. "Nyan Cat" and "Tac Nayn" can be synonmous).
      *
      * @see DummyPlugin::onMetaHeaders()
      */
     public function onMetaHeaders(array &$headers)
     {
         $this->metaHeaders = &$headers;
+
+        if ($this->triggersApiEvents(self::API_VERSION_1_0)) {
+            $headersFlipped = array_flip($headers);
+
+            $this->triggerEvent(self::API_VERSION_1_0, 'onMetaHeaders', array(&$headersFlipped));
+
+            $this->updateFlippedMetaHeaders($headersFlipped);
+        }
+    }
+
+    /**
+     * Syncs self::$metaHeaders with a flipped headers array
+     *
+     * @param array $headersFlipped flipped headers array
+     *
+     * @return void
+     */
+    protected function updateFlippedMetaHeaders(array $headersFlipped)
+    {
+        foreach ($this->metaHeaders as $name => $key) {
+            if (!isset($headersFlipped[$key])) {
+                unset($this->metaHeaders[$name]);
+            }
+        }
+
+        foreach ($headersFlipped as $key => $name) {
+            $this->metaHeaders[$name] = $key;
+        }
+    }
+
+    /**
+     * Lowers a page's meta headers as with Pico 1.0 and older
+     *
+     * This makes unregistered meta headers available using lowered array keys
+     * and matches registered meta headers in a case-insensitive manner.
+     *
+     * @param array &$meta       meta data
+     * @param array $metaHeaders known meta header fields
+     *
+     * @return void
+     */
+    protected function lowerFileMeta(array &$meta)
+    {
+        $metaHeaders = $this->getMetaHeaders();
+
+        // get unregistered meta
+        $unregisteredMeta = array();
+        foreach ($meta as $key => $value) {
+            if (!in_array($key, $metaHeaders)) {
+                $unregisteredMeta[$key] = &$meta[$key];
+            }
+        }
+
+        // Pico 1.0 lowered unregistered meta unsolicited...
+        if ($unregisteredMeta) {
+            $metaHeadersLowered = array_change_key_case($metaHeaders, CASE_LOWER);
+            foreach ($unregisteredMeta as $key => $value) {
+                $keyLowered = strtolower($key);
+                if (isset($metaHeadersLowered[$keyLowered])) {
+                    $registeredKey = $metaHeadersLowered[$keyLowered];
+                    if ($meta[$registeredKey] === '') {
+                        $meta[$registeredKey] = &$unregisteredMeta[$key];
+                    }
+                } else if (!isset($meta[$keyLowered]) || ($meta[$keyLowered] === '')) {
+                    $meta[$keyLowered] = &$unregisteredMeta[$key];
+                }
+            }
+        }
     }
 
     /**
@@ -669,14 +769,21 @@ class PicoDeprecated extends AbstractPicoPlugin
     /**
      * Returns whether events of a particular API level are triggered or not
      *
-     * @param int $apiVersion API version to check
+     * @param int $apiVersion,... API version to check
      *
-     * @return boolean TRUE if PicoDeprecated triggers events of this API level,
-     *     FALSE otherwise
+     * @return boolean TRUE if PicoDeprecated triggers events of one of the
+     *     passed API levels, FALSE otherwise
      */
     public function triggersApiEvents($apiVersion)
     {
-        return isset($this->plugins[$apiVersion]);
+        $apiVersions = func_get_args();
+        foreach ($apiVersions as $apiVersion) {
+            if (isset($this->plugins[$apiVersion])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
