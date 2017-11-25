@@ -116,6 +116,7 @@ class PicoDeprecated extends AbstractPicoPlugin
         'onPagesDiscovered' => array(),
         'onPagesLoaded' => array(),
         'onCurrentPageDiscovered' => array(),
+        'onPageTreeBuilt' => array(),
         'onPageRendering' => array(),
         'onPageRendered' => array(
             array(self::API_VERSION_0_9, 'after_render'),
