@@ -638,14 +638,30 @@ class PicoDeprecated extends AbstractPicoPlugin
         // make sure to trigger the onTwigRegistered event
         $this->getTwig();
 
+        // split template name
+        $templateNameInfo = pathinfo($templateName) + array('extension' => '');
+
+        // Pico 2.0+ requires themes to use .twig as file extension
+        // try to load the template and if this fails, try .html instead (< Pico 2.0)
+        try {
+            $this->getTwig()->load($templateName);
+        } catch(Twig_Error_Loader $e) {
+            if ($templateNameInfo['extension'] === 'twig') {
+                try {
+                    $this->getTwig()->load($templateNameInfo['filename'] . '.html');
+
+                    $templateName = $templateNameInfo['filename'] . '.html';
+                    $templateNameInfo['extension'] = 'html';
+                } catch(Twig_Error_Loader $e) {
+                    // template doesn't exist, Twig will likely fail later
+                }
+            }
+        }
+
         // trigger API v0 event
         if ($this->triggersApiEvents(self::API_VERSION_0_9)) {
-            // template name contains file extension since Pico 1.0
-            $fileExtension = '';
-            if (($fileExtensionPos = strrpos($templateName, '.')) !== false) {
-                $fileExtension = substr($templateName, $fileExtensionPos);
-                $templateName = substr($templateName, 0, $fileExtensionPos);
-            }
+            // the template name contains a file extension since Pico 1.0
+            $templateName = $templateNameInfo['filename'];
 
             // trigger event
             $this->triggerEvent(
@@ -654,9 +670,9 @@ class PicoDeprecated extends AbstractPicoPlugin
                 array(&$twigVariables, &$this->twig, &$templateName)
             );
 
-            // add original file extension
+            // recover original file extension
             // we assume that all templates of a theme use the same file extension
-            $templateName = $templateName . $fileExtension;
+            $templateName = $templateName . '.' . $templateNameInfo['extension'];
         }
 
         // trigger API v1 event
