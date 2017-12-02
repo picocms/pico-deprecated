@@ -12,13 +12,19 @@ Please refer to [`picocms/Pico`](https://github.com/picocms/Pico) to get info ab
 Install
 -------
 
-You don't have to install this plugin manually, it's already a dependency of Pico's core.
+You usually don't have to install this plugin manually, it's shipped together with [Pico's pre-built release packages](https://github.com/picocms/Pico/releases/latest) and a default dependency of [`picocms/pico-composer`](https://github.com/picocms/pico-composer).
 
-The versioning of `PicoDeprecated` follows the major and minor version of Pico's core. You **must not** use a version of `PicoDeprecated` that doesn't match the major and minor version of Pico's core (e.g. v2.1.3 is incompatible with Pico 2.0), i.e. for Pico 2.0 you **must** use a version constraint like `~2.0.0`.
+If you're using plugins and themes that are compatible with Pico's latest API version only, you can safely remove `PicoDeprecated` from your Pico installation or disable the plugin (please refer to the "Usage" section below). However, if you're not sure about this, simply leave it as it is - it won't hurt... :wink:
+
+If you use a `composer`-based installation of Pico and want to either remove or install `PicoDeprecated`, simply open a shell on your server and navigate to Pico's install directory (e.g. `/var/www/html`). Run `composer remove picocms/pico-deprecated` to remove `PicoDeprecated`, or run `composer require picocms/pico-deprecated` (via [Packagist.org](https://packagist.org/packages/picocms/pico-deprecated)) to install `PicoDeprecated`.
+
+If you rather use one of Pico's pre-built release packages, it is best to disable `PicoDeprecated` and not to actually remove it. The reason for this is, that `PicoDeprecated` is part of Pico's pre-built release packages, thus it will be automatically re-installed when updating Pico. However, if you really want to remove `PicoDeprecated`, simply delete the `plugins/PicoDeprecated` directory in Pico's install directory (e.g. `/var/www/html`). If you want to install `PicoDeprecated`, you must first create a empty `plugins/PicoDeprecated` directory on your server, [download the version of `PicoDeprecated`](https://github.com/picocms/pico-deprecated/releases) matching the version of your Pico installation and upload all containing files (esp. `PicoDeprecated.php`) into said `plugins/PicoDeprecated` directory (resulting in `plugins/PicoDeprecated/PicoDeprecated.php`).
+
+The versioning of `PicoDeprecated` strictly follows the version of Pico's core. You *must not* use a version of `PicoDeprecated` that doesn't match the version of Pico's core (e.g. PicoDeprecated 2.0.1 is *not compatible* with Pico 2.0.0). If you're using a `composer`-based installation of Pico, simply use a version constaint like `^2.0` - `PicoDeprecated` ensures that its version matches Pico's version. Even if you're using one of Pico's pre-built release packages, you don't have to take care of anything - a matching version of `PicoDeprecated` is part of Pico's pre-built release packages anyway.
 
 Usage
 -----
 
-The plugin tries to guess whether it needs to be enabled or not. Obviously guessing doesn't always work, so you might want to enable or disable the plugin manually by adding `PicoDeprecated.enabled: true` or `PicoDeprecated.enabled: false` to your `config/config.yml`.
+You can explicitly disable `PicoDeprecated` by adding `PicoDeprecated.enabled: false` to your `config/config.yml`. If you want to re-enable `PicoDeprecated`, simply remove this line from your `config/config.yml`.
 
-Please refer to [`FEATURES.md`](FEATURES.md) for a complete list of all characteristics `PicoDeprecated` restores.
+`PicoDeprecated` itself has no configuration options, it enables and disables all of its features depending on whether there are plugins requiring said characteristics. Please refer to [`FEATURES.md`](FEATURES.md) for a complete list of all characteristics `PicoDeprecated` restores.
