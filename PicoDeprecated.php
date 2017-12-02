@@ -6,6 +6,12 @@
  *
  * <https://github.com/picocms/pico-deprecated/blob/master/PicoDeprecated.php>
  *
+ * The file was previously part of the project's main repository; the version
+ * control history of the original file applies accordingly, available from
+ * the following original location:
+ *
+ * <https://github.com/picocms/Pico/blob/82a342ba445122182b898a2c1800f03c8d16f18c/plugins/00-PicoDeprecated.php>
+ *
  * SPDX-License-Identifier: MIT
  * License-Filename: LICENSE
  */
