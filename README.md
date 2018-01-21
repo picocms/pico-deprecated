@@ -25,6 +25,16 @@ The versioning of `PicoDeprecated` strictly follows the version of Pico's core. 
 Usage
 -----
 
-You can explicitly disable `PicoDeprecated` by adding `PicoDeprecated.enabled: false` to your `config/config.yml`. If you want to re-enable `PicoDeprecated`, simply remove this line from your `config/config.yml`.
+You can explicitly disable `PicoDeprecated` by adding `PicoDeprecated.enabled: false` to your `config/config.yml`. If you want to re-enable `PicoDeprecated`, simply remove this line from your `config/config.yml`. `PicoDeprecated` itself has no configuration options, it enables and disables all of its features depending on whether there are plugins requiring said characteristics.
 
-`PicoDeprecated` itself has no configuration options, it enables and disables all of its features depending on whether there are plugins requiring said characteristics. Please refer to [`FEATURES.md`](FEATURES.md) for a complete list of all characteristics `PicoDeprecated` restores.
+Getting Help
+------------
+
+Please refer to the ["Getting Help" section](https://github.com/picocms/Pico#getting-help) of our main repository.
+
+Contributing
+------------
+
+Please refer to the ["Contributing" section](https://github.com/picocms/Pico#contributing) of our main repository.
+
+By contributing to Pico, you accept and agree to the *Developer Certificate of Origin* for your present and future contributions submitted to Pico. Please refer to the ["Developer Certificate of Origin" section](https://github.com/picocms/Pico/blob/master/CONTRIBUTING.md#developer-certificate-of-origin) in the `CONTRIBUTING.md` of our main repository.
