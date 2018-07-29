@@ -21,6 +21,11 @@ Pico Deprecated Changelog
           because they are already listed in Pico's changelog. Only functional
           changes and/or BC-breaking changes are listed below.
 
+### Version 2.0.1
+Released: 2018-07-29
+
+No changes
+
 ### Version 2.0.0
 Released: 2018-07-01
 
