@@ -26,5 +26,10 @@
     },
     "autoload": {
         "classmap": [ "PicoDeprecated.php" ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
     }
 }
