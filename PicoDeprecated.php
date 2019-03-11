@@ -641,6 +641,9 @@ class PicoDeprecated extends AbstractPicoPlugin
             $twigVariables['is_front_page'] = ($this->getRequestFile() === $frontPage);
         }
 
+        // prev_page was renamed to previous_page with Pico 2.1
+        $twigVariables['prev_page'] = &$twigVariables['previous_page'];
+
         // make sure to trigger the onTwigRegistered event
         $this->getTwig();
 
