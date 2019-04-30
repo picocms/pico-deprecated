@@ -653,6 +653,10 @@ class PicoDeprecated extends AbstractPicoPlugin
         // prev_page was renamed to previous_page with Pico 2.1
         $twigVariables['prev_page'] = &$twigVariables['previous_page'];
 
+        // base_dir and theme_dir have been removed with Pico 2.1
+        $twigVariables['base_dir'] = rtrim($this->getRootDir(), '/');
+        $twigVariables['theme_dir'] = $this->getThemesDir() . $this->getConfig('theme');
+
         // make sure to trigger the onTwigRegistered event
         $this->getTwig();
 
