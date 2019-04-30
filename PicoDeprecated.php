@@ -270,11 +270,12 @@ class PicoDeprecated extends AbstractPicoPlugin
      *
      * 1. Defines various config-related constants
      *    ({@see self::defineConstants()})
-     * 2. Reads `config.php` in Pico's config dir (`config/config.php`)
+     * 2. Maintains config compatibility in a general manner
+     * 3. Reads `config.php` in Pico's config dir (`config/config.php`)
      *    ({@see self::loadScriptedConfig()})
-     * 3. Reads `config.php` in Pico's root dir
+     * 4. Reads `config.php` in Pico's root dir
      *    ({@see self::loadRootDirConfig()})
-     * 4. Defines the global `$config` variable
+     * 5. Defines the global `$config` variable
      *
      * @see self::defineConstants()
      * @see self::loadScriptedConfig()
@@ -283,7 +284,13 @@ class PicoDeprecated extends AbstractPicoPlugin
      */
     public function onConfigLoaded(array &$config)
     {
-        $this->defineConstants();
+        $this->defineConfigConstants();
+
+        if (!empty($config['theme_url'])) {
+            $config['themes_url'] = $this->getAbsoluteUrl($config['theme_url']);
+            $config['theme_url'] = &$config['themes_url'];
+        }
+
         $this->loadScriptedConfig($config);
         $this->loadRootDirConfig($config);
 
@@ -304,7 +311,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      *
      * @return void
      */
-    protected function defineConstants()
+    protected function defineConfigConstants()
     {
         if (!defined('ROOT_DIR')) {
             define('ROOT_DIR', $this->getRootDir());
@@ -361,12 +368,14 @@ class PicoDeprecated extends AbstractPicoPlugin
                 if (!empty($config['content_dir'])) {
                     $config['content_dir'] = $this->getAbsolutePath($config['content_dir']);
                 }
-                if (!empty($config['theme_url'])) {
-                    if (preg_match('#^[A-Za-z][A-Za-z0-9+\-.]*://#', $config['theme_url'])) {
-                        $config['theme_url'] = rtrim($config['theme_url'], '/') . '/';
-                    } else {
-                        $config['theme_url'] = $this->getBaseUrl() . rtrim($config['theme_url'], '/') . '/';
+                if (empty($config['themes_url'])) {
+                    if (!empty($config['theme_url'])) {
+                        $config['themes_url'] = $this->getAbsoluteUrl($config['theme_url']);
+                        $config['theme_url'] = &$config['themes_url'];
                     }
+                } else {
+                    $config['themes_url'] = $this->getAbsoluteUrl($config['themes_url']);
+                    $config['theme_url'] = &$config['themes_url'];
                 }
                 if (!empty($config['timezone'])) {
                     date_default_timezone_set($config['timezone']);
