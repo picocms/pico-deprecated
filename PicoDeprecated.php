@@ -35,7 +35,7 @@
  * @author  Daniel Rudolf
  * @link    http://picocms.org
  * @license http://opensource.org/licenses/MIT The MIT License
- * @version 2.0
+ * @version 2.1
  */
 class PicoDeprecated extends AbstractPicoPlugin
 {
@@ -61,7 +61,7 @@ class PicoDeprecated extends AbstractPicoPlugin
     const API_VERSION_1_0 = 1;
 
     /**
-     * API version of Pico 2.0
+     * API version of Pico 2.0 and Pico 2.1
      *
      * @var int
      */
