@@ -25,7 +25,7 @@
         "picocms/pico": "self.version"
     },
     "autoload": {
-        "classmap": [ "PicoDeprecated.php" ]
+        "classmap": [ "PicoDeprecated.php", "lib/", "plugins/" ]
     },
     "extra": {
         "branch-alias": {
