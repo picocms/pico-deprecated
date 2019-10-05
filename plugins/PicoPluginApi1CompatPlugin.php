@@ -111,15 +111,39 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Triggers the onPluginsLoaded event
      *
      * Prior to API v2 the event `onPluginsLoaded` passed the `$plugins` array
-     * by reference. This is no longer the case. To prevent a "hard" BC-break,
-     * we still pass the param by reference, however, changing its value
-     * doesn't affect anything. This might be a BC-breaking change for you!
+     * by reference. This is no longer the case. We still pass the parameter by
+     * reference and use {@see Pico::loadPlugin()} to load additional plugins,
+     * however, unloading or replacing plugins was removed without a
+     * replacement. This might be a BC-breaking change for you!
      *
      * @param object[] $plugins loaded plugin instances
      */
     public function onPluginsLoaded(array $plugins)
     {
+        $originalPlugins = $plugins;
+
         $this->triggerEvent('onPluginsLoaded', array(&$plugins));
+
+        foreach ($plugins as $pluginName => $plugin) {
+            if (!isset($originalPlugins[$pluginName])) {
+                $this->getPico()->loadPlugin($plugin);
+            } elseif ($plugin !== $originalPlugins[$pluginName]) {
+                throw new RuntimeException(
+                    "A Pico plugin using API version 1 tried to replace Pico plugin '" . $pluginName . "' using the "
+                    . "onPluginsLoaded() event, however, replacing plugins was removed with API version 2"
+                );
+            }
+
+            unset($originalPlugins[$pluginName]);
+        }
+
+        if ($originalPlugins) {
+            $removedPluginsList = implode("', '", array_keys($originalPlugins));
+            throw new RuntimeException(
+                "A Pico plugin using API version 1 tried to unload the Pico plugin(s) '" . $removedPluginsList . "' "
+                . "using the onPluginsLoaded() event, however, unloading plugins was removed with API version 2"
+            );
+        }
     }
 
     /**
