@@ -46,7 +46,6 @@ class PicoPluginApi2CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     protected $eventAliases = array(
         'onPluginsLoaded'         => array('onPluginsLoaded'),
         'onPluginManuallyLoaded'  => array('onPluginManuallyLoaded'),
-        'onConfigLoaded'          => array('onConfigLoaded'),
         'onRequestUrl'            => array('onRequestUrl'),
         'onRequestFile'           => array('onRequestFile'),
         'onContentLoading'        => array('onContentLoading'),
@@ -75,7 +74,18 @@ class PicoPluginApi2CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     );
 
     /**
-     * Handles the theme_url config param
+     * Pico's config array
+     *
+     * @see Pico::$config
+     * @see PicoPluginApi2CompatPlugin::onConfigLoaded()
+     *
+     * @var array|null
+     */
+    protected $config;
+
+    /**
+     * Sets PicoPluginApi1CompatPlugin::$config and handles the theme_url
+     * config param
      *
      * @see PicoPluginApi2CompatPlugin::$config
      *
@@ -83,10 +93,24 @@ class PicoPluginApi2CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      */
     public function onConfigLoaded(array &$config)
     {
+        $this->config = &$config;
+
         if (!empty($config['theme_url'])) {
             $config['themes_url'] = $this->getPico()->getAbsoluteUrl($config['theme_url']);
             $config['theme_url'] = &$config['themes_url'];
         }
+    }
+
+    /**
+     * Triggers the onConfigLoaded event
+     *
+     * @param string $theme           name of current theme
+     * @param int    $themeApiVersion API version of the theme
+     * @param array  &$themeConfig    config array of the theme
+     */
+    public function onThemeLoaded($theme, $themeApiVersion, array &$themeConfig)
+    {
+        $this->triggerEvent('onConfigLoaded', array(&$this->config));
     }
 
     /**
