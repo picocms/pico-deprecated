@@ -98,10 +98,10 @@ class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     /**
      * Defines various config-related constants
      *
-     * `ROOT_DIR`, `LIB_DIR`, `PLUGINS_DIR`, `THEMES_DIR` and `CONTENT_EXT`
-     * were removed wih Pico 1.0, `CACHE_DIR` was dropped with Pico 1.0 without
-     * a replacement, `CONTENT_DIR` existed just in Pico 0.9 and `CONFIG_DIR`
-     * existed just for a short time between Pico 0.9 and Pico 1.0.
+     * `ROOT_DIR`, `LIB_DIR`, `PLUGINS_DIR`, `THEMES_DIR`, `CONTENT_EXT` and
+     * `CACHE_DIR` were removed wih Pico 1.0, `CONTENT_DIR` existed just in
+     * Pico 0.9 and `CONFIG_DIR` existed just for a short time between Pico 0.9
+     * and Pico 1.0.
      *
      * @param array &$config array of config variables
      */
@@ -128,6 +128,10 @@ class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
         }
         if (!defined('CONTENT_EXT')) {
             define('CONTENT_EXT', $this->getPico()->getConfig('content_ext'));
+        }
+        if (!defined('CACHE_DIR')) {
+            $twigConfig = $this->getPico()->getConfig('twig_config');
+            define('CACHE_DIR', $twigConfig['cache'] ?: '');
         }
     }
 
