@@ -252,9 +252,7 @@ class PicoDeprecated extends AbstractPicoPlugin
         }
 
         $apiVersion = $plugin->getApiVersion();
-        if ($apiVersion !== static::API_VERSION) {
-            $this->loadPluginApiCompatPlugin($apiVersion);
-        }
+        $this->loadPluginApiCompatPlugin($apiVersion);
 
         $dependsOn = $plugin->getDependencies();
         foreach ($dependsOn as $pluginDependency) {
