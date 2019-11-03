@@ -93,14 +93,14 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
 
         try {
             $twig->loadTemplate($templateName);
-        } catch(Twig_Error_Loader $e) {
+        } catch (Twig_Error_Loader $e) {
             if ($templateNameInfo['extension'] === 'twig') {
                 try {
                     $twig->loadTemplate($templateNameInfo['filename'] . '.html');
 
                     $templateName = $templateNameInfo['filename'] . '.html';
                     $templateNameInfo['extension'] = 'html';
-                } catch(Twig_Error_Loader $e) {
+                } catch (Twig_Error_Loader $e) {
                     // template doesn't exist, Twig will very likely fail later
                 }
             }
@@ -137,7 +137,7 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
                     if ($meta[$registeredKey] === '') {
                         $meta[$registeredKey] = &$unregisteredMeta[$key];
                     }
-                } else if (!isset($meta[$keyLowered]) || ($meta[$keyLowered] === '')) {
+                } elseif (!isset($meta[$keyLowered]) || ($meta[$keyLowered] === '')) {
                     $meta[$keyLowered] = &$unregisteredMeta[$key];
                 }
             }

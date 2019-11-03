@@ -24,7 +24,8 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 2.1
  */
-abstract class AbstractPicoPluginApiCompatPlugin extends AbstractPicoCompatPlugin implements PicoPluginApiCompatPluginInterface
+abstract class AbstractPicoPluginApiCompatPlugin extends AbstractPicoCompatPlugin implements
+    PicoPluginApiCompatPluginInterface
 {
     /**
      * Map of core events matching event signatures of older API versions
