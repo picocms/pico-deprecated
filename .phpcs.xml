@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<ruleset name="Pico">
+    <description>
+        Pico's coding standards mainly base on the PHP-FIG PSR-2 standard,
+        but without the MissingNamespace sniff.
+    </description>
+
+    <!--
+        Run on current working directory by default
+    -->
+    <file>.</file>
+
+    <!--
+        Exclude .build/, .github/ and vendor/ dirs as well as minified JavaScript files
+    -->
+    <exclude-pattern type="relative">^.build/</exclude-pattern>
+    <exclude-pattern type="relative">^.github/</exclude-pattern>
+    <exclude-pattern type="relative">^vendor/</exclude-pattern>
+    <exclude-pattern>*.min.js</exclude-pattern>
+
+    <!--
+        Check files for PHP syntax errors
+    -->
+    <config name="php_path" value="php"/>
+    <rule ref="Generic.PHP.Syntax"/>
+
+    <!--
+        Never use deprecated functions,
+        as they will be removed in future PHP releases
+    -->
+    <rule ref="Generic.PHP.DeprecatedFunctions"/>
+
+    <!--
+        Warn about structures which affect performance negatively
+    -->
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
+
+    <!--
+        Pico follows PHP-FIG PSR-2 Coding Style,
+        but doesn't use formal namespaces for historic reasons
+    -->
+    <rule ref="PSR2">
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+    </rule>
+
+    <!--
+        The PHP-FIG PSR-2 Coding Style doesn't fully apply to JavaScript files
+        Furthermore, some sniffs aren't able to handle JavaScript peculiarities
+    -->
+    <rule ref="Generic.ControlStructures.InlineControlStructure">
+        <exclude-pattern>*.js</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+        <exclude-pattern>*.js</exclude-pattern>
+    </rule>
+</ruleset>

@@ -12,5 +12,11 @@ desktop.ini
 
 # Composer
 /composer.lock
-/composer.phar
 /vendor
+
+# Build system
+/.build/build
+/.build/deploy
+/.build/ci-tools
+/pico-deprecated-release-*.tar.gz
+/pico-deprecated-release-*.zip
