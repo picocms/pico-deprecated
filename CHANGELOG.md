@@ -21,6 +21,24 @@ Pico Deprecated Changelog
           because they are already listed in Pico's changelog. Only functional
           changes and/or BC-breaking changes are listed below.
 
+### Version 2.1.0-beta.1
+Released: -
+
+```
+* [New] Add support for the latest API v3 changes
+* [New] Support disabled Twig autoescape prior to API v3
+* [New] Re-introduce `theme_url` config variable
+* [New] Re-introduce `prev_page`, `base_dir` and `theme_dir` Twig variables
+* [New] Support loading additional plugins using API v1 `onPluginsLoaded` event
+* [New] Re-introduce Pico v0.9 config constant `CACHE_DIR`
+* [New] Add release & build system to test the plugin using PHP_CodeSniffer and
+        to automatically create pre-built release packages
+* [Changed] Split the plugin's functionality into multiple compatibility
+            plugins (two for each API version, for plugins and themes resp.)
+            and load the necessary compatibility plugins on demand only; also
+            allow 3rd-party plugins to load their own compatibility plugins
+```
+
 ### Version 2.0.5-beta.1
 Released: 2019-01-03
 
