@@ -22,7 +22,7 @@ Pico Deprecated Changelog
           changes and/or BC-breaking changes are listed below.
 
 ### Version 2.1.0-beta.1
-Released: -
+Released: 2019-11-03
 
 ```
 * [New] Add support for the latest API v3 changes
