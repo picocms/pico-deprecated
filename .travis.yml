@@ -1,4 +1,5 @@
-dist: trusty
+os: linux
+dist: bionic
 sudo: false
 
 language: php
@@ -10,12 +11,8 @@ cache:
 jobs:
   include:
     # Test stage
-    - php: 5.3
-      dist: precise
-    - php: 5.4
-    - php: 5.5
-    - php: 5.6
     - php: 7.0
+      dist: xenial
     - php: 7.1
     - php: 7.2
     - php: 7.3
@@ -27,8 +24,8 @@ jobs:
     # Release deployment stage
     - stage: deploy-release
       if: tag IS present
-      php: 5.3
-      dist: precise
+      php: 7.0
+      dist: xenial
       install:
         - install.sh
       script:
