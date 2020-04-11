@@ -39,7 +39,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @var string[]
      */
-    protected $dependsOn = array(PluginApi2Plugin::class, ThemeApi1Plugin::class);
+    protected $dependsOn = [ PluginApi2Plugin::class, ThemeApi1Plugin::class ];
 
     /**
      * Map of core events matching event signatures of older API versions
@@ -48,18 +48,18 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @var array<string,string>
      */
-    protected $eventAliases = array(
-        'onConfigLoaded'      => array('onConfigLoaded'),
-        'onRequestUrl'        => array('onRequestUrl'),
-        'onRequestFile'       => array('onRequestFile'),
-        'on404ContentLoaded'  => array('on404ContentLoaded'),
-        'onContentLoaded'     => array('onContentLoaded'),
-        'onContentPrepared'   => array('onContentPrepared'),
-        'onContentParsed'     => array('onContentParsed'),
-        'onPagesLoading'      => array('onPagesLoading'),
-        'onSinglePageLoaded'  => array('onSinglePageLoaded'),
-        'onPageRendered'      => array('onPageRendered')
-    );
+    protected $eventAliases = [
+        'onConfigLoaded' =>     [ 'onConfigLoaded' ],
+        'onRequestUrl' =>       [ 'onRequestUrl' ],
+        'onRequestFile' =>      [ 'onRequestFile' ],
+        'on404ContentLoaded' => [ 'on404ContentLoaded' ],
+        'onContentLoaded' =>    [ 'onContentLoaded' ],
+        'onContentPrepared' =>  [ 'onContentPrepared' ],
+        'onContentParsed' =>    [ 'onContentParsed' ],
+        'onPagesLoading' =>     [ 'onPagesLoading' ],
+        'onSinglePageLoaded' => [ 'onSinglePageLoaded' ],
+        'onPageRendered' =>     [ 'onPageRendered' ],
+    ];
 
     /**
      * Pico's request file
@@ -126,7 +126,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     {
         $originalPlugins = $plugins;
 
-        $this->triggerEvent('onPluginsLoaded', array(&$plugins));
+        $this->triggerEvent('onPluginsLoaded', [ &$plugins ]);
 
         foreach ($plugins as $pluginName => $plugin) {
             if (!isset($originalPlugins[$pluginName])) {
@@ -167,7 +167,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      */
     public function onContentLoading()
     {
-        $this->triggerEvent('onContentLoading', array(&$this->requestFile));
+        $this->triggerEvent('onContentLoading', [ &$this->requestFile ]);
     }
 
     /**
@@ -187,7 +187,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      */
     public function on404ContentLoading()
     {
-        $this->triggerEvent('on404ContentLoading', array(&$this->requestFile));
+        $this->triggerEvent('on404ContentLoading', [ &$this->requestFile ]);
     }
 
     /**
@@ -198,7 +198,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     public function onMetaParsing()
     {
         $headersFlipped = $this->getFlippedMetaHeaders();
-        $this->triggerEvent('onMetaParsing', array(&$this->rawContent, &$headersFlipped));
+        $this->triggerEvent('onMetaParsing', [ &$this->rawContent, &$headersFlipped ]);
         $this->updateFlippedMetaHeaders($headersFlipped);
     }
 
@@ -209,7 +209,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      */
     public function onMetaParsed(array &$meta)
     {
-        $this->triggerEvent('onMetaParsed', array(&$meta));
+        $this->triggerEvent('onMetaParsed', [ &$meta ]);
         $this->triggerEvent('onParsedownRegistration');
     }
 
@@ -218,7 +218,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      */
     public function onContentParsing()
     {
-        $this->triggerEvent('onContentParsing', array(&$this->rawContent));
+        $this->triggerEvent('onContentParsing', [ &$this->rawContent ]);
     }
 
     /**
@@ -245,7 +245,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
         array &$previousPage = null,
         array &$nextPage = null
     ) {
-        $this->triggerEvent('onPagesLoaded', array(&$this->pages, &$currentPage, &$previousPage, &$nextPage));
+        $this->triggerEvent('onPagesLoaded', [ &$this->pages, &$currentPage, &$previousPage, &$nextPage ]);
 
         $this->triggerEvent('onTwigRegistration');
         $this->getPico()->getTwig();
@@ -259,7 +259,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      */
     public function onPageRendering(&$templateName, array &$twigVariables)
     {
-        $this->triggerEvent('onPageRendering', array(&$this->twig, &$twigVariables, &$templateName));
+        $this->triggerEvent('onPageRendering', [ &$this->twig, &$twigVariables, &$templateName ]);
     }
 
     /**
@@ -277,7 +277,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
         $this->metaHeaders = &$headers;
 
         $headersFlipped = $this->getFlippedMetaHeaders();
-        $this->triggerEvent('onMetaHeaders', array(&$headersFlipped));
+        $this->triggerEvent('onMetaHeaders', [ &$headersFlipped ]);
         $this->updateFlippedMetaHeaders($headersFlipped);
     }
 
@@ -312,7 +312,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
             $this->getPico()->getMetaHeaders();
         }
 
-        return array_flip($this->metaHeaders ?: array());
+        return array_flip($this->metaHeaders ?: []);
     }
 
     /**

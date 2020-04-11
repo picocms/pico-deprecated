@@ -77,7 +77,7 @@ class MainPlugin extends AbstractPlugin
         // scope isolated require()
         $includeConfigClosure = function ($configFile) {
             require($configFile);
-            return (isset($config) && is_array($config)) ? $config : array();
+            return (isset($config) && is_array($config)) ? $config : [];
         };
         if (PHP_VERSION_ID >= 50400) {
             $includeConfigClosure = $includeConfigClosure->bindTo(null);
@@ -90,7 +90,7 @@ class MainPlugin extends AbstractPlugin
             $picoConfigReflector = $picoReflector->getProperty('config');
             $picoConfigReflector->setAccessible(true);
 
-            $config = $picoConfigReflector->getValue($this->getPico()) ?: array();
+            $config = $picoConfigReflector->getValue($this->getPico()) ?: [];
             $config += $scriptedConfig;
 
             $picoConfigReflector->setValue($this->getPico(), $config);

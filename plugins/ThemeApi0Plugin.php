@@ -45,7 +45,7 @@ class ThemeApi0Plugin extends AbstractPlugin
      *
      * @var string[]
      */
-    protected $dependsOn = array(ThemeApi1Plugin::class);
+    protected $dependsOn = [ ThemeApi1Plugin::class ];
 
     /**
      * {@inheritDoc}

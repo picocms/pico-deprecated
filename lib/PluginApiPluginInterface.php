@@ -28,7 +28,7 @@ interface PluginApiPluginInterface extends PluginInterface
      * @param string $eventName name of the triggered event
      * @param array  $params    passed parameters
      */
-    public function handleCustomEvent($eventName, array $params = array());
+    public function handleCustomEvent($eventName, array $params = []);
 
     /**
      * Returns the API version this plugin maintains backward compatibility for

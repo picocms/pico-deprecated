@@ -39,7 +39,7 @@ class ThemeApi1Plugin extends AbstractPlugin
      *
      * @var string[]
      */
-    protected $dependsOn = array(ThemeApi2Plugin::class);
+    protected $dependsOn = [ ThemeApi2Plugin::class ];
 
     /**
      * Lowers the page's meta headers
@@ -93,7 +93,7 @@ class ThemeApi1Plugin extends AbstractPlugin
 
         // API v2 requires themes to use .twig as file extension
         // try to load the template and if this fails, try .html instead (as of API v1)
-        $templateNameInfo = pathinfo($templateName) + array('extension' => '');
+        $templateNameInfo = pathinfo($templateName) + [ 'extension' => '' ];
         $twig = $this->getPico()->getTwig();
 
         try {
@@ -125,7 +125,7 @@ class ThemeApi1Plugin extends AbstractPlugin
         $metaHeaders = $this->getPico()->getMetaHeaders();
 
         // get unregistered meta
-        $unregisteredMeta = array();
+        $unregisteredMeta = [];
         foreach ($meta as $key => $value) {
             if (!in_array($key, $metaHeaders)) {
                 $unregisteredMeta[$key] = &$meta[$key];

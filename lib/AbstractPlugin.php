@@ -56,7 +56,7 @@ abstract class AbstractPlugin implements PluginInterface
      *
      * @var string[]
      */
-    protected $dependsOn = array();
+    protected $dependsOn = [];
 
     /**
      * Constructs a new instance of a PicoDeprecated compatibility plugin
@@ -76,7 +76,7 @@ abstract class AbstractPlugin implements PluginInterface
     public function handleEvent($eventName, array $params)
     {
         if (method_exists($this, $eventName)) {
-            call_user_func_array(array($this, $eventName), $params);
+            call_user_func_array([ $this, $eventName ], $params);
         }
     }
 

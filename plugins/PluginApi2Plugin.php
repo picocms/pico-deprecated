@@ -39,7 +39,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
      *
      * @var string[]
      */
-    protected $dependsOn = array(ThemeApi2Plugin::class);
+    protected $dependsOn = [ ThemeApi2Plugin::class ];
 
     /**
      * Map of core events matching event signatures of older API versions
@@ -48,35 +48,35 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
      *
      * @var array<string,string>
      */
-    protected $eventAliases = array(
-        'onPluginsLoaded'         => array('onPluginsLoaded'),
-        'onPluginManuallyLoaded'  => array('onPluginManuallyLoaded'),
-        'onRequestUrl'            => array('onRequestUrl'),
-        'onRequestFile'           => array('onRequestFile'),
-        'onContentLoading'        => array('onContentLoading'),
-        'on404ContentLoading'     => array('on404ContentLoading'),
-        'on404ContentLoaded'      => array('on404ContentLoaded'),
-        'onContentLoaded'         => array('onContentLoaded'),
-        'onMetaParsing'           => array('onMetaParsing'),
-        'onMetaParsed'            => array('onMetaParsed'),
-        'onContentParsing'        => array('onContentParsing'),
-        'onContentPrepared'       => array('onContentPrepared'),
-        'onContentParsed'         => array('onContentParsed'),
-        'onPagesLoading'          => array('onPagesLoading'),
-        'onSinglePageLoading'     => array('onSinglePageLoading'),
-        'onSinglePageContent'     => array('onSinglePageContent'),
-        'onSinglePageLoaded'      => array('onSinglePageLoaded'),
-        'onPagesDiscovered'       => array('onPagesDiscovered'),
-        'onPagesLoaded'           => array('onPagesLoaded'),
-        'onCurrentPageDiscovered' => array('onCurrentPageDiscovered'),
-        'onPageTreeBuilt'         => array('onPageTreeBuilt'),
-        'onPageRendering'         => array('onPageRendering'),
-        'onPageRendered'          => array('onPageRendered'),
-        'onMetaHeaders'           => array('onMetaHeaders'),
-        'onYamlParserRegistered'  => array('onYamlParserRegistered'),
-        'onParsedownRegistered'   => array('onParsedownRegistered'),
-        'onTwigRegistered'        => array('onTwigRegistered')
-    );
+    protected $eventAliases = [
+        'onPluginsLoaded' =>         [ 'onPluginsLoaded' ],
+        'onPluginManuallyLoaded' =>  [ 'onPluginManuallyLoaded' ],
+        'onRequestUrl' =>            [ 'onRequestUrl' ],
+        'onRequestFile' =>           [ 'onRequestFile' ],
+        'onContentLoading' =>        [ 'onContentLoading' ],
+        'on404ContentLoading' =>     [ 'on404ContentLoading' ],
+        'on404ContentLoaded' =>      [ 'on404ContentLoaded' ],
+        'onContentLoaded' =>         [ 'onContentLoaded' ],
+        'onMetaParsing' =>           [ 'onMetaParsing' ],
+        'onMetaParsed' =>            [ 'onMetaParsed' ],
+        'onContentParsing' =>        [ 'onContentParsing' ],
+        'onContentPrepared' =>       [ 'onContentPrepared' ],
+        'onContentParsed' =>         [ 'onContentParsed' ],
+        'onPagesLoading' =>          [ 'onPagesLoading' ],
+        'onSinglePageLoading' =>     [ 'onSinglePageLoading' ],
+        'onSinglePageContent' =>     [ 'onSinglePageContent' ],
+        'onSinglePageLoaded' =>      [ 'onSinglePageLoaded' ],
+        'onPagesDiscovered' =>       [ 'onPagesDiscovered' ],
+        'onPagesLoaded' =>           [ 'onPagesLoaded' ],
+        'onCurrentPageDiscovered' => [ 'onCurrentPageDiscovered' ],
+        'onPageTreeBuilt' =>         [ 'onPageTreeBuilt' ],
+        'onPageRendering' =>         [ 'onPageRendering' ],
+        'onPageRendered' =>          [ 'onPageRendered' ],
+        'onMetaHeaders' =>           [ 'onMetaHeaders' ],
+        'onYamlParserRegistered' =>  [ 'onYamlParserRegistered' ],
+        'onParsedownRegistered' =>   [ 'onParsedownRegistered' ],
+        'onTwigRegistered' =>        [ 'onTwigRegistered' ],
+    ];
 
     /**
      * Pico's config array
@@ -114,7 +114,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
      */
     public function onThemeLoaded($theme, $themeApiVersion, array &$themeConfig)
     {
-        $this->triggerEvent('onConfigLoaded', array(&$this->config));
+        $this->triggerEvent('onConfigLoaded', [ &$this->config ]);
     }
 
     /**

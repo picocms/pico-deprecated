@@ -46,7 +46,7 @@ class ThemeApi2Plugin extends AbstractPlugin
      *
      * @var string[]
      */
-    protected $pluginPaths = array();
+    protected $pluginPaths = [];
 
     /**
      * Sets ThemeApi2Plugin::$twigEscapeStrategy
@@ -88,7 +88,7 @@ class ThemeApi2Plugin extends AbstractPlugin
         if ($twig->hasExtension('Twig_Extension_Escaper')) {
             /** @var \Twig_Extension_Escaper $escaperExtension */
             $escaperExtension = $twig->getExtension('Twig_Extension_Escaper');
-            $escaperExtension->setDefaultStrategy(array($this, 'twigEscapeStrategy'));
+            $escaperExtension->setDefaultStrategy([ $this, 'twigEscapeStrategy' ]);
         }
     }
 
@@ -186,7 +186,7 @@ class ThemeApi2Plugin extends AbstractPlugin
             $pluginReflector = new \ReflectionObject($plugin);
 
             $pluginPath = dirname($pluginReflector->getFileName() ?: '') . '/';
-            if (in_array($pluginPath, array('/', $rootDir, $vendorDir, $pluginsDir, $themesDir), true)) {
+            if (in_array($pluginPath, [ '/', $rootDir, $vendorDir, $pluginsDir, $themesDir ], true)) {
                 $pluginPath = '';
             }
 

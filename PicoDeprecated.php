@@ -49,35 +49,35 @@ class PicoDeprecated extends AbstractPicoPlugin
      *
      * @var int
      */
-    const API_VERSION = 3;
+    public const API_VERSION = 3;
 
     /**
      * API version 0, used by Pico 0.9 and earlier
      *
      * @var int
      */
-    const API_VERSION_0 = 0;
+    public const API_VERSION_0 = 0;
 
     /**
      * API version 1, used by Pico 1.0
      *
      * @var int
      */
-    const API_VERSION_1 = 1;
+    public const API_VERSION_1 = 1;
 
     /**
      * API version 2, used by Pico 2.0
      *
      * @var int
      */
-    const API_VERSION_2 = 2;
+    public const API_VERSION_2 = 2;
 
     /**
      * API version 3, used by Pico 2.1
      *
      * @var int
      */
-    const API_VERSION_3 = 3;
+    public const API_VERSION_3 = 3;
 
     /**
      * Loaded plugins, indexed by API version
@@ -86,7 +86,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      *
      * @var object[]
      */
-    protected $plugins = array();
+    protected $plugins = [];
 
     /**
      * Loaded compatibility plugins
@@ -95,7 +95,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      *
      * @var PluginInterface[]
      */
-    protected $compatPlugins = array();
+    protected $compatPlugins = [];
 
     /**
      * {@inheritDoc}
@@ -163,7 +163,7 @@ class PicoDeprecated extends AbstractPicoPlugin
             $this->loadPlugin($plugin);
         }
 
-        $this->getPico()->triggerEvent('onPicoDeprecated', array($this));
+        $this->getPico()->triggerEvent('onPicoDeprecated', [ $this ]);
     }
 
     /**
@@ -206,7 +206,7 @@ class PicoDeprecated extends AbstractPicoPlugin
 
         $apiVersion = $this->getPluginApiVersion($plugin);
         if (!isset($this->plugins[$apiVersion])) {
-            $this->plugins[$apiVersion] = array();
+            $this->plugins[$apiVersion] = [];
             $this->loadPluginApiCompatPlugin($apiVersion);
         }
 
@@ -222,7 +222,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      */
     public function getPlugins($apiVersion)
     {
-        return isset($this->plugins[$apiVersion]) ? $this->plugins[$apiVersion] : array();
+        return isset($this->plugins[$apiVersion]) ? $this->plugins[$apiVersion] : [];
     }
 
     /**
@@ -320,7 +320,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      * @param string $eventName  event to trigger
      * @param array  $params     optional parameters to pass
      */
-    public function triggerEvent($apiVersion, $eventName, array $params = array())
+    public function triggerEvent($apiVersion, $eventName, array $params = [])
     {
         foreach ($this->getPlugins($apiVersion) as $plugin) {
             $plugin->handleEvent($eventName, $params);
@@ -354,7 +354,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      */
     public function getCoreEvents()
     {
-        return array(
+        return [
             'onPluginsLoaded',
             'onPluginManuallyLoaded',
             'onConfigLoaded',
@@ -384,7 +384,7 @@ class PicoDeprecated extends AbstractPicoPlugin
             'onMetaHeaders',
             'onYamlParserRegistered',
             'onParsedownRegistered',
-            'onTwigRegistered'
-        );
+            'onTwigRegistered',
+        ];
     }
 }

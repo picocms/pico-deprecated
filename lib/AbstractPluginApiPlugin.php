@@ -35,7 +35,7 @@ abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginA
      *
      * @var array<string,string>
      */
-    protected $eventAliases = array();
+    protected $eventAliases = [];
 
     /**
      * {@inheritDoc}
@@ -55,7 +55,7 @@ abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginA
     /**
      * {@inheritDoc}
      */
-    public function handleCustomEvent($eventName, array $params = array())
+    public function handleCustomEvent($eventName, array $params = [])
     {
         $this->getPicoDeprecated()->triggerEvent($this->getApiVersionSupport(), $eventName, $params);
     }
@@ -66,7 +66,7 @@ abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginA
      * @param string $eventName name of the event to trigger
      * @param array  $params    optional parameters to pass
      */
-    protected function triggerEvent($eventName, array $params = array())
+    protected function triggerEvent($eventName, array $params = [])
     {
         $apiVersion = $this->getApiVersionSupport();
         $picoDeprecated = $this->getPicoDeprecated();
