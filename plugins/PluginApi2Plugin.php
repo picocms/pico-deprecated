@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoPluginApi2CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PluginApi2Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,6 +18,11 @@
  * License-Filename: LICENSE
  */
 
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPluginApiPlugin;
+use PicoDeprecated;
+
 /**
  * Maintains backward compatibility with plugins using API version 2, written
  * for Pico 2.0
@@ -27,19 +32,19 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-class PicoPluginApi2CompatPlugin extends AbstractPicoPluginApiCompatPlugin
+class PluginApi2Plugin extends AbstractPluginApiPlugin
 {
     /**
-     * This plugin extends {@see PicoThemeApi2CompatPlugin}
+     * This plugin extends {@see ThemeApi2Plugin}
      *
      * @var string[]
      */
-    protected $dependsOn = array('PicoThemeApi2CompatPlugin');
+    protected $dependsOn = array(ThemeApi2Plugin::class);
 
     /**
      * Map of core events matching event signatures of older API versions
      *
-     * @see AbstractPicoPluginApiCompatPlugin::handleEvent()
+     * @see AbstractPluginApiPlugin::handleEvent()
      *
      * @var array<string,string>
      */
@@ -77,17 +82,16 @@ class PicoPluginApi2CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's config array
      *
      * @see Pico::$config
-     * @see PicoPluginApi2CompatPlugin::onConfigLoaded()
+     * @see PluginApi2Plugin::onConfigLoaded()
      *
      * @var array|null
      */
     protected $config;
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$config and handles the theme_url
-     * config param
+     * Sets PluginApi2Plugin::$config and handles the theme_url config param
      *
-     * @see PicoPluginApi2CompatPlugin::$config
+     * @see PluginApi2Plugin::$config
      *
      * @param array $config
      */

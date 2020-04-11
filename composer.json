@@ -30,7 +30,11 @@
         "picocms/pico": "self.version"
     },
     "autoload": {
-        "classmap": [ "PicoDeprecated.php", "lib/", "plugins/" ]
+        "psr-0": { "PicoDeprecated": "" },
+        "psr-4": {
+            "picocms\\PicoDeprecated\\": "lib/",
+            "picocms\\PicoDeprecated\\Plugin\\": "plugins/"
+        }
     },
     "extra": {
         "branch-alias": {

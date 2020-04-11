@@ -4,33 +4,34 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/lib/AbstractPicoPluginApiCompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/lib/AbstractPluginApiPlugin.php>
  *
  * SPDX-License-Identifier: MIT
  * License-Filename: LICENSE
  */
 
+namespace picocms\PicoDeprecated;
+
 /**
  * Abstract class to extend from when implementing a PicoDeprecated plugin API
  * compatibility plugin
  *
- * Please refer to {@see PicoPluginApiCompatPluginInterface} for more information about
- * how to develop a PicoDeprecated plugin API compatibility plugin.
+ * Please refer to {@see PluginApiPluginInterface} for more information about how to
+ * develop a PicoDeprecated plugin API compatibility plugin.
  *
- * @see     PicoPluginApiCompatPluginInterface
+ * @see     PluginApiPluginInterface
  *
  * @author  Daniel Rudolf
  * @link    http://picocms.org
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-abstract class AbstractPicoPluginApiCompatPlugin extends AbstractPicoCompatPlugin implements
-    PicoPluginApiCompatPluginInterface
+abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginApiPluginInterface
 {
     /**
      * Map of core events matching event signatures of older API versions
      *
-     * @see AbstractPicoPluginApiCompatPlugin::handleEvent()
+     * @see AbstractPluginApiPlugin::handleEvent()
      *
      * @var array<string,string>
      */

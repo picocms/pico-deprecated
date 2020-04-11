@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoThemeApi2CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/ThemeApi2Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,6 +18,11 @@
  * License-Filename: LICENSE
  */
 
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPlugin;
+use PicoDeprecated;
+
 /**
  * Maintains backward compatibility with themes using API version 2, written
  * for Pico 2.0
@@ -27,7 +32,7 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-class PicoThemeApi2CompatPlugin extends AbstractPicoCompatPlugin
+class ThemeApi2Plugin extends AbstractPlugin
 {
     /**
      * Manually configured Twig escape strategy
@@ -44,9 +49,9 @@ class PicoThemeApi2CompatPlugin extends AbstractPicoCompatPlugin
     protected $pluginPaths = array();
 
     /**
-     * Sets PicoThemeApi2CompatPlugin::$twigEscapeStrategy
+     * Sets ThemeApi2Plugin::$twigEscapeStrategy
      *
-     * @see PicoThemeApi2CompatPlugin::$twigEscapeStrategy
+     * @see ThemeApi2Plugin::$twigEscapeStrategy
      *
      * @param array &$config array of config variables
      */
@@ -71,17 +76,17 @@ class PicoThemeApi2CompatPlugin extends AbstractPicoCompatPlugin
     }
 
     /**
-     * Registers PicoPluginApi2CompatPlugin::twigEscapeStrategy() as Twig's
-     * default escape strategy
+     * Registers PluginApi2Plugin::twigEscapeStrategy() as Twig's default
+     * escape strategy
      *
-     * @see PicoPluginApi2CompatPlugin::twigEscapeStrategy()
+     * @see PluginApi2Plugin::twigEscapeStrategy()
      *
-     * @param Twig_Environment &$twig Twig instance
+     * @param \Twig_Environment &$twig Twig instance
      */
-    public function onTwigRegistered(Twig_Environment &$twig)
+    public function onTwigRegistered(\Twig_Environment &$twig)
     {
         if ($twig->hasExtension('Twig_Extension_Escaper')) {
-            /** @var Twig_Extension_Escaper $escaperExtension */
+            /** @var \Twig_Extension_Escaper $escaperExtension */
             $escaperExtension = $twig->getExtension('Twig_Extension_Escaper');
             $escaperExtension->setDefaultStrategy(array($this, 'twigEscapeStrategy'));
         }
@@ -118,10 +123,10 @@ class PicoThemeApi2CompatPlugin extends AbstractPicoCompatPlugin
             return false;
         }
 
-        /** @var Twig_SourceContextLoaderInterface $twigLoader */
+        /** @var \Twig_SourceContextLoaderInterface $twigLoader */
         $twigLoader = $this->getPico()->getTwig()->getLoader();
-        if (!$twigLoader instanceof Twig_SourceContextLoaderInterface) {
-            throw new RuntimeException(
+        if (!$twigLoader instanceof \Twig_SourceContextLoaderInterface) {
+            throw new \RuntimeException(
                 "PicoDeprecated compat plugin '" . __CLASS__ . "' requires a 'Twig_SourceContextLoaderInterface' "
                 . "Twig loader, '" . get_class($twigLoader) . "' given"
             );
@@ -178,7 +183,7 @@ class PicoThemeApi2CompatPlugin extends AbstractPicoCompatPlugin
                 continue;
             }
 
-            $pluginReflector = new ReflectionObject($plugin);
+            $pluginReflector = new \ReflectionObject($plugin);
 
             $pluginPath = dirname($pluginReflector->getFileName() ?: '') . '/';
             if (in_array($pluginPath, array('/', $rootDir, $vendorDir, $pluginsDir, $themesDir), true)) {

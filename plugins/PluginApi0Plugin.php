@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoPluginApi0CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PluginApi0Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,6 +18,12 @@
  * License-Filename: LICENSE
  */
 
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\Pico\Pico;
+use picocms\PicoDeprecated\AbstractPluginApiPlugin;
+use PicoDeprecated;
+
 /**
  * Maintains backward compatibility with plugins using API version 0, written
  * for Pico 0.9 and earlier
@@ -27,20 +33,19 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
+class PluginApi0Plugin extends AbstractPluginApiPlugin
 {
     /**
-     * This plugin extends {@see PicoPluginApi1CompatPlugin} and
-     * {@see PicoThemeApi0CompatPlugin}
+     * This plugin extends {@see PluginApi1Plugin} and {@see ThemeApi0Plugin}
      *
      * @var string[]
      */
-    protected $dependsOn = array('PicoPluginApi1CompatPlugin', 'PicoThemeApi0CompatPlugin');
+    protected $dependsOn = array(PluginApi1Plugin::class, ThemeApi0Plugin::class);
 
     /**
      * Map of core events matching event signatures of older API versions
      *
-     * @see AbstractPicoPluginApiCompatPlugin::handleEvent()
+     * @see AbstractPluginApiPlugin::handleEvent()
      *
      * @var array<string,string>
      */
@@ -60,7 +65,7 @@ class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's request file
      *
      * @see Pico::$requestFile
-     * @see PicoPluginApi0CompatPlugin::onRequestFile()
+     * @see PluginApi0Plugin::onRequestFile()
      *
      * @var string|null
      */
@@ -114,7 +119,7 @@ class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
             define('CONFIG_DIR', $this->getPico()->getConfigDir());
         }
         if (!defined('LIB_DIR')) {
-            $picoReflector = new ReflectionClass('Pico');
+            $picoReflector = new \ReflectionClass(Pico::class);
             define('LIB_DIR', dirname($picoReflector->getFileName()) . '/');
         }
         if (!defined('PLUGINS_DIR')) {
@@ -136,9 +141,9 @@ class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$requestFile
+     * Sets PluginApi0Plugin::$requestFile
      *
-     * @see PicoPluginApi0CompatPlugin::$requestFile
+     * @see PluginApi0Plugin::$requestFile
      *
      * @param string &$file absolute path to the content file to serve
      */
@@ -253,11 +258,11 @@ class PicoPluginApi0CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Please note that the `before_render` event gets `$templateName` passed
      * without its file extension. The file extension is re-added later.
      *
-     * @param Twig_Environment &$twig          Twig instance
+     * @param \Twig_Environment &$twig         Twig instance
      * @param string           &$templateName  file name of the template
      * @param array            &$twigVariables template variables
      */
-    public function onPageRendering(Twig_Environment &$twig, array &$twigVariables, &$templateName)
+    public function onPageRendering(\Twig_Environment &$twig, array &$twigVariables, &$templateName)
     {
         $templateNameInfo = pathinfo($templateName) + array('extension' => '');
 

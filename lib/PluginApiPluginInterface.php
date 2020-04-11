@@ -4,11 +4,13 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/lib/PicoPluginApiCompatPluginInterface.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/lib/PluginApiPluginInterface.php>
  *
  * SPDX-License-Identifier: MIT
  * License-Filename: LICENSE
  */
+
+namespace picocms\PicoDeprecated;
 
 /**
  * Common interface for PicoDeprecated plugin API compatibility plugins
@@ -18,7 +20,7 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-interface PicoPluginApiCompatPluginInterface extends PicoCompatPluginInterface
+interface PluginApiPluginInterface extends PluginInterface
 {
     /**
      * Handles custom events for plugins of the supported API version

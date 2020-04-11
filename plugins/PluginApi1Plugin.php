@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoPluginApi1CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PluginApi1Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,6 +18,11 @@
  * License-Filename: LICENSE
  */
 
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPluginApiPlugin;
+use PicoDeprecated;
+
 /**
  * Maintains backward compatibility with plugins using API version 1, written
  * for Pico 1.0
@@ -27,20 +32,19 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
+class PluginApi1Plugin extends AbstractPluginApiPlugin
 {
     /**
-     * This plugin extends {@see PicoPluginApi2CompatPlugin} and
-     * {@see PicoThemeApi1CompatPlugin}
+     * This plugin extends {@see PluginApi2Plugin} and {@see ThemeApi1Plugin}
      *
      * @var string[]
      */
-    protected $dependsOn = array('PicoPluginApi2CompatPlugin', 'PicoThemeApi1CompatPlugin');
+    protected $dependsOn = array(PluginApi2Plugin::class, ThemeApi1Plugin::class);
 
     /**
      * Map of core events matching event signatures of older API versions
      *
-     * @see AbstractPicoPluginApiCompatPlugin::handleEvent()
+     * @see AbstractPluginApiPlugin::handleEvent()
      *
      * @var array<string,string>
      */
@@ -61,7 +65,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's request file
      *
      * @see Pico::$requestFile
-     * @see PicoPluginApi1CompatPlugin::onRequestFile()
+     * @see PluginApi1Plugin::onRequestFile()
      *
      * @var string|null
      */
@@ -71,7 +75,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's raw contents
      *
      * @see Pico::$rawContent
-     * @see PicoPluginApi1CompatPlugin::onContentLoaded()
+     * @see PluginApi1Plugin::onContentLoaded()
      *
      * @var string|null
      */
@@ -81,7 +85,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's meta headers array
      *
      * @see Pico::$metaHeaders
-     * @see PicoPluginApi1CompatPlugin::onMetaHeaders()
+     * @see PluginApi1Plugin::onMetaHeaders()
      *
      * @var array<string,string>|null
      */
@@ -91,7 +95,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's pages array
      *
      * @see Pico::$pages
-     * @see PicoPluginApi1CompatPlugin::onPagesLoaded()
+     * @see PluginApi1Plugin::onPagesLoaded()
      *
      * @var array[]|null
      */
@@ -101,9 +105,9 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's Twig instance
      *
      * @see Pico::$twig
-     * @see PicoPluginApi1CompatPlugin::onTwigRegistered()
+     * @see PluginApi1Plugin::onTwigRegistered()
      *
-     * @var Twig_Environment|null
+     * @var \Twig_Environment|null
      */
     protected $twig;
 
@@ -128,7 +132,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
             if (!isset($originalPlugins[$pluginName])) {
                 $this->getPico()->loadPlugin($plugin);
             } elseif ($plugin !== $originalPlugins[$pluginName]) {
-                throw new RuntimeException(
+                throw new \RuntimeException(
                     "A Pico plugin using API version 1 tried to replace Pico plugin '" . $pluginName . "' using the "
                     . "onPluginsLoaded() event, however, replacing plugins was removed with API version 2"
                 );
@@ -139,7 +143,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
 
         if ($originalPlugins) {
             $removedPluginsList = implode("', '", array_keys($originalPlugins));
-            throw new RuntimeException(
+            throw new \RuntimeException(
                 "A Pico plugin using API version 1 tried to unload the Pico plugin(s) '" . $removedPluginsList . "' "
                 . "using the onPluginsLoaded() event, however, unloading plugins was removed with API version 2"
             );
@@ -147,9 +151,9 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$requestFile
+     * Sets PluginApi1Plugin::$requestFile
      *
-     * @see PicoPluginApi1CompatPlugin::$requestFile
+     * @see PluginApi1Plugin::$requestFile
      *
      * @param string &$file absolute path to the content file to serve
      */
@@ -167,9 +171,9 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$rawContent
+     * Sets PluginApi1Plugin::$rawContent
      *
-     * @see PicoPluginApi1CompatPlugin::$rawContent
+     * @see PluginApi1Plugin::$rawContent
      *
      * @param string &$rawContent raw file contents
      */
@@ -189,7 +193,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     /**
      * Triggers the onMetaParsing event
      *
-     * @see PicoPluginApi1CompatPlugin::onMetaHeaders()
+     * @see PluginApi1Plugin::onMetaHeaders()
      */
     public function onMetaParsing()
     {
@@ -218,9 +222,9 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$pages
+     * Sets PluginApi1Plugin::$pages
      *
-     * @see PicoPluginApi1CompatPlugin::$pages
+     * @see PluginApi1Plugin::$pages
      *
      * @param array[] &$pages sorted list of all known pages
      */
@@ -260,9 +264,9 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
 
     /**
      * Triggers the onMetaHeaders event with flipped meta headers and sets
-     * PicoPluginApi1CompatPlugin::$metaHeaders
+     * PluginApi1Plugin::$metaHeaders
      *
-     * @see PicoPluginApi1CompatPlugin::$metaHeaders
+     * @see PluginApi1Plugin::$metaHeaders
      *
      * @param string[] &$headers list of known meta header fields; the array
      *     key specifies the YAML key to search for, the array value is later
@@ -278,13 +282,13 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$twig
+     * Sets PluginApi1Plugin::$twig
      *
-     * @see PicoPluginApi1CompatPlugin::$twig
+     * @see PluginApi1Plugin::$twig
      *
-     * @param Twig_Environment &$twig Twig instance
+     * @param \Twig_Environment &$twig Twig instance
      */
-    public function onTwigRegistered(Twig_Environment &$twig)
+    public function onTwigRegistered(\Twig_Environment &$twig)
     {
         $this->twig = $twig;
     }
@@ -312,7 +316,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Syncs PicoPluginApi1CompatPlugin::$metaHeaders with a flipped headers array
+     * Syncs PluginApi1Plugin::$metaHeaders with a flipped headers array
      *
      * @param array $headersFlipped flipped headers array
      */

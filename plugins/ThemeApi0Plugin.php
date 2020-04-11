@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoThemeApi0CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/ThemeApi0Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,14 +18,19 @@
  * License-Filename: LICENSE
  */
 
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPlugin;
+use PicoDeprecated;
+
 /**
  * Maintains backward compatibility with themes using API version 0, written
  * for Pico 0.9 and earlier
  *
  * Since there were no theme-related changes between Pico 0.9 and Pico 1.0,
  * this compat plugin doesn't hold any code itself, it just depends on
- * {@see PicoThemeApi1CompatPlugin}. Since themes didn't support API versioning
- * until Pico 2.1 (i.e. API version 3), all older themes will appear to use API
+ * {@see ThemeApi1Plugin}. Since themes didn't support API versioning until
+ * Pico 2.1 (i.e. API version 3), all older themes will appear to use API
  * version 0.
  *
  * @author  Daniel Rudolf
@@ -33,14 +38,14 @@
  * @license http://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
-class PicoThemeApi0CompatPlugin extends AbstractPicoCompatPlugin
+class ThemeApi0Plugin extends AbstractPlugin
 {
     /**
-     * This plugin extends {@see PicoThemeApi1CompatPlugin}
+     * This plugin extends {@see ThemeApi1Plugin}
      *
      * @var string[]
      */
-    protected $dependsOn = array('PicoThemeApi1CompatPlugin');
+    protected $dependsOn = array(ThemeApi1Plugin::class);
 
     /**
      * {@inheritDoc}
