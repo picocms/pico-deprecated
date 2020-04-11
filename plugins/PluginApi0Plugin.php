@@ -23,6 +23,7 @@ namespace picocms\PicoDeprecated\Plugin;
 use picocms\Pico\Pico;
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
 use PicoDeprecated;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * Maintains backward compatibility with plugins using API version 0, written
@@ -258,11 +259,11 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      * Please note that the `before_render` event gets `$templateName` passed
      * without its file extension. The file extension is re-added later.
      *
-     * @param \Twig_Environment &$twig         Twig instance
-     * @param string           &$templateName  file name of the template
-     * @param array            &$twigVariables template variables
+     * @param TwigEnvironment &$twig          Twig instance
+     * @param string          &$templateName  file name of the template
+     * @param array           &$twigVariables template variables
      */
-    public function onPageRendering(\Twig_Environment &$twig, array &$twigVariables, &$templateName)
+    public function onPageRendering(TwigEnvironment &$twig, array &$twigVariables, &$templateName)
     {
         $templateNameInfo = pathinfo($templateName) + [ 'extension' => '' ];
 

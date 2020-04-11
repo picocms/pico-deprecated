@@ -22,6 +22,10 @@ namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
 use PicoDeprecated;
+use Twig\Environment as TwigEnvironment;
+use Twig\Error\LoaderError as TwigLoaderError;
+use Twig\Extension\EscaperExtension as TwigEscaperExtension;
+use Twig\Loader\LoaderInterface as TwigLoaderInterface;
 
 /**
  * Maintains backward compatibility with themes using API version 2, written
@@ -81,13 +85,13 @@ class ThemeApi2Plugin extends AbstractPlugin
      *
      * @see PluginApi2Plugin::twigEscapeStrategy()
      *
-     * @param \Twig_Environment &$twig Twig instance
+     * @param TwigEnvironment &$twig Twig instance
      */
-    public function onTwigRegistered(\Twig_Environment &$twig)
+    public function onTwigRegistered(TwigEnvironment &$twig)
     {
-        if ($twig->hasExtension('Twig_Extension_Escaper')) {
-            /** @var \Twig_Extension_Escaper $escaperExtension */
-            $escaperExtension = $twig->getExtension('Twig_Extension_Escaper');
+        if ($twig->hasExtension(TwigEscaperExtension::class)) {
+            /** @var TwigEscaperExtension $escaperExtension */
+            $escaperExtension = $twig->getExtension(TwigEscaperExtension::class);
             $escaperExtension->setDefaultStrategy([ $this, 'twigEscapeStrategy' ]);
         }
     }
@@ -123,18 +127,12 @@ class ThemeApi2Plugin extends AbstractPlugin
             return false;
         }
 
-        /** @var \Twig_SourceContextLoaderInterface $twigLoader */
+        /** @var TwigLoaderInterface $twigLoader */
         $twigLoader = $this->getPico()->getTwig()->getLoader();
-        if (!$twigLoader instanceof \Twig_SourceContextLoaderInterface) {
-            throw new \RuntimeException(
-                "PicoDeprecated compat plugin '" . __CLASS__ . "' requires a 'Twig_SourceContextLoaderInterface' "
-                . "Twig loader, '" . get_class($twigLoader) . "' given"
-            );
-        }
 
         try {
             $templatePath = $twigLoader->getSourceContext($templateName)->getPath();
-        } catch (\Twig\Error\LoaderError $e) {
+        } catch (TwigLoaderError $e) {
             $templatePath = '';
         }
 

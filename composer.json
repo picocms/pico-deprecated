@@ -26,7 +26,7 @@
         "source": "https://github.com/picocms/pico-deprecated"
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.2.5",
         "picocms/pico": "self.version"
     },
     "autoload": {

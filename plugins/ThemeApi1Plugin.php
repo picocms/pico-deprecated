@@ -22,6 +22,7 @@ namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
 use PicoDeprecated;
+use Twig\Error\LoaderError as TwigLoaderError;
 
 /**
  * Maintains backward compatibility with themes using API version 1, written
@@ -98,14 +99,14 @@ class ThemeApi1Plugin extends AbstractPlugin
 
         try {
             $twig->loadTemplate($templateName);
-        } catch (\Twig_Error_Loader $e) {
+        } catch (TwigLoaderError $e) {
             if ($templateNameInfo['extension'] === 'twig') {
                 try {
                     $twig->loadTemplate($templateNameInfo['filename'] . '.html');
 
                     $templateName = $templateNameInfo['filename'] . '.html';
                     $templateNameInfo['extension'] = 'html';
-                } catch (\Twig_Error_Loader $e) {
+                } catch (TwigLoaderError $e) {
                     // template doesn't exist, Twig will very likely fail later
                 }
             }

@@ -22,6 +22,7 @@ namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
 use PicoDeprecated;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * Maintains backward compatibility with plugins using API version 1, written
@@ -107,7 +108,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      * @see Pico::$twig
      * @see PluginApi1Plugin::onTwigRegistered()
      *
-     * @var \Twig_Environment|null
+     * @var TwigEnvironment|null
      */
     protected $twig;
 
@@ -286,9 +287,9 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @see PluginApi1Plugin::$twig
      *
-     * @param \Twig_Environment &$twig Twig instance
+     * @param TwigEnvironment &$twig Twig instance
      */
-    public function onTwigRegistered(\Twig_Environment &$twig)
+    public function onTwigRegistered(TwigEnvironment &$twig)
     {
         $this->twig = $twig;
     }
