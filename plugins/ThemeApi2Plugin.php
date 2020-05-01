@@ -138,7 +138,7 @@ class ThemeApi2Plugin extends AbstractPlugin
 
         if ($templatePath) {
             $themePath = realpath($this->getPico()->getThemesDir() . $this->getPico()->getTheme()) . '/';
-            if (substr($templatePath, 0, strlen($themePath)) === $themePath) {
+            if (substr_compare($templatePath, $themePath, 0, strlen($themePath)) === 0) {
                 $themeApiVersion = $this->getPico()->getThemeApiVersion();
                 return ($themeApiVersion >= PicoDeprecated::API_VERSION_3) ? $escapeStrategy : false;
             }
@@ -167,7 +167,7 @@ class ThemeApi2Plugin extends AbstractPlugin
     {
         $plugins = $this->getPico()->getPlugins();
         foreach ($this->pluginPaths as $pluginName => $pluginPath) {
-            if ($pluginPath && (substr($path, 0, strlen($pluginPath)) === $pluginPath)) {
+            if ($pluginPath && (substr_compare($path, $pluginPath, 0, strlen($pluginPath)) === 0)) {
                 return $plugins[$pluginName];
             }
         }
@@ -190,7 +190,7 @@ class ThemeApi2Plugin extends AbstractPlugin
 
             $this->pluginPaths[$pluginName] = $pluginPath;
 
-            if ($pluginPath && (substr($path, 0, strlen($pluginPath)) === $pluginPath)) {
+            if ($pluginPath && (substr_compare($path, $pluginPath, 0, strlen($pluginPath)) === 0)) {
                 return $plugins[$pluginName];
             }
         }

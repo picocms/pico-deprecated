@@ -231,8 +231,8 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
         $pages = [];
         foreach ($plainPages as &$pageData) {
             if (!isset($pageData['id'])) {
-                if (substr($pageData['url'], 0, $baseUrlLength) === $baseUrl) {
-                    if ($urlRewritingEnabled && (substr($pageData['url'], $baseUrlLength, 1) === '?')) {
+                if (substr_compare($pageData['url'], $baseUrl, 0, $baseUrlLength) === 0) {
+                    if ($urlRewritingEnabled && (substr_compare($pageData['url'], '?', $baseUrlLength, 1) === 0)) {
                         $pageData['id'] = substr($pageData['url'], $baseUrlLength + 1);
                     } else {
                         $pageData['id'] = substr($pageData['url'], $baseUrlLength);
