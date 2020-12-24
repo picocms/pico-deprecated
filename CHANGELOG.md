@@ -21,6 +21,11 @@ Pico Deprecated Changelog
           because they are already listed in Pico's changelog. Only functional
           changes and/or BC-breaking changes are listed below.
 
+### Version 3.0.0-alpha.2
+Released: 2020-12-24
+
+No changes
+
 ### Version 2.1.4
 Released: 2020-08-29
 
