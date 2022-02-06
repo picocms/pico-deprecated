@@ -12,7 +12,7 @@
 
 namespace picocms\PicoDeprecated;
 
-use picocms\Pico\Pico;
+use Pico;
 use PicoDeprecated;
 
 /**

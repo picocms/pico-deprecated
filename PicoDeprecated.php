@@ -16,9 +16,6 @@
  * License-Filename: LICENSE
  */
 
-use picocms\Pico\AbstractPlugin as AbstractPicoPlugin;
-use picocms\Pico\Pico;
-use picocms\Pico\PluginInterface as PicoPluginInterface;
 use picocms\PicoDeprecated\Plugin\MainPlugin;
 use picocms\PicoDeprecated\PluginApiPluginInterface;
 use picocms\PicoDeprecated\PluginInterface;

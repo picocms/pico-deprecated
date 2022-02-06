@@ -12,17 +12,17 @@
 
 namespace picocms\PicoDeprecated;
 
-use picocms\Pico\Pico;
+use Pico;
 use PicoDeprecated;
 
 /**
  * Abstract class to extend from when implementing a PicoDeprecated
  * compatibility plugin
  *
- * Please refer to {@see PluginInterface} for more information about how to
+ * Please refer to {@see PicoPluginInterface} for more information about how to
  * develop a PicoDeprecated compatibility plugin.
  *
- * @see PluginInterface
+ * @see PicoPluginInterface
  *
  * @author  Daniel Rudolf
  * @link    http://picocms.org
@@ -34,7 +34,7 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * Current instance of Pico
      *
-     * @see PluginInterface::getPico()
+     * @see PicoPluginInterface::getPico()
      *
      * @var Pico
      */
@@ -52,7 +52,7 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * List of plugins which this plugin depends on
      *
-     * @see PluginInterface::getDependencies()
+     * @see PicoPluginInterface::getDependencies()
      *
      * @var string[]
      */

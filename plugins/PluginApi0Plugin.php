@@ -20,8 +20,8 @@
 
 namespace picocms\PicoDeprecated\Plugin;
 
-use picocms\Pico\Pico;
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
+use Pico;
 use PicoDeprecated;
 use Twig\Environment as TwigEnvironment;
 
