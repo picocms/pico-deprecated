@@ -46,7 +46,7 @@ class PicoDeprecated extends AbstractPicoPlugin
      *
      * @var int
      */
-    public const API_VERSION = 3;
+    public const API_VERSION = 4;
 
     /**
      * API version 0, used by Pico 0.9 and earlier
@@ -75,6 +75,13 @@ class PicoDeprecated extends AbstractPicoPlugin
      * @var int
      */
     public const API_VERSION_3 = 3;
+
+    /**
+     * API version 4, used by Pico 3.0
+     *
+     * @var int
+     */
+    public const API_VERSION_4 = 4;
 
     /**
      * Loaded plugins, indexed by API version
