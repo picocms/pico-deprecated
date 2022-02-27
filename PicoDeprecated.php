@@ -32,11 +32,11 @@ use picocms\PicoDeprecated\PluginInterface;
  * API versions than the one of Pico's core, even when there was just the
  * slightest change.
  *
- * {@see http://picocms.org/plugins/deprecated/} for a full list of features.
+ * {@see https://picocms.org/plugins/deprecated/} for a full list of features.
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
 class PicoDeprecated extends AbstractPicoPlugin

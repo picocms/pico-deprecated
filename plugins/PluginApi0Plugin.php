@@ -30,8 +30,8 @@ use Twig\Environment as TwigEnvironment;
  * for Pico 0.9 and earlier
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
 class PluginApi0Plugin extends AbstractPluginApiPlugin

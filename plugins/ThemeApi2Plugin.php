@@ -32,8 +32,8 @@ use Twig\Loader\LoaderInterface as TwigLoaderInterface;
  * for Pico 2.0
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
 class ThemeApi2Plugin extends AbstractPlugin

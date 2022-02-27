@@ -3,7 +3,7 @@ Pico Deprecated Plugin
 
 This is the repository of Pico's official `PicoDeprecated` plugin.
 
-Pico is a stupidly simple, blazing fast, flat file CMS. See http://picocms.org/ for more info.
+Pico is a stupidly simple, blazing fast, flat file CMS. See https://picocms.org/ for more info.
 
 `PicoDeprecated`'s purpose is to maintain backward compatibility to older versions of Pico, by re-introducing characteristics that were removed from Pico's core. It for example triggers old events (like the `before_render` event used before Pico 1.0) and reads config files that were written in PHP (`config/config.php`, used before Pico 2.0).
 

@@ -27,8 +27,8 @@ use PicoDeprecated;
  * Maintains backward compatibility with older Pico versions
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
  * @version 3.0
  */
 class MainPlugin extends AbstractPlugin
