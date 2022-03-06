@@ -42,6 +42,20 @@ use picocms\PicoDeprecated\PluginInterface;
 class PicoDeprecated extends AbstractPicoPlugin
 {
     /**
+     * PicoDeprecated version
+     *
+     * @var string
+     */
+    public const VERSION = '3.0.0-dev';
+
+    /**
+     * PicoDeprecated version ID
+     *
+     * @var int
+     */
+    public const VERSION_ID = 30000;
+
+    /**
      * API version used by this plugin
      *
      * @var int
