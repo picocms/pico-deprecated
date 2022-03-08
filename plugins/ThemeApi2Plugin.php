@@ -24,6 +24,7 @@ namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
 use PicoDeprecated;
+use ReflectionObject;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError as TwigLoaderError;
 use Twig\Extension\EscaperExtension as TwigEscaperExtension;
@@ -40,6 +41,13 @@ use Twig\Loader\LoaderInterface as TwigLoaderInterface;
  */
 class ThemeApi2Plugin extends AbstractPlugin
 {
+    /**
+     * This plugin extends {@see ThemeApi3Plugin}
+     *
+     * @var string[]
+     */
+    protected $dependsOn = [ ThemeApi3Plugin::class ];
+
     /**
      * Manually configured Twig escape strategy
      *
@@ -183,7 +191,7 @@ class ThemeApi2Plugin extends AbstractPlugin
                 continue;
             }
 
-            $pluginReflector = new \ReflectionObject($plugin);
+            $pluginReflector = new ReflectionObject($plugin);
 
             $pluginPath = dirname($pluginReflector->getFileName() ?: '') . '/';
             if (in_array($pluginPath, [ '/', $rootDir, $vendorDir, $pluginsDir, $themesDir ], true)) {

@@ -75,7 +75,7 @@ class ThemeApi1Plugin extends AbstractPlugin
     }
 
     /**
-     * Handles .html Twig templates and re-introcudes the Twig variables
+     * Handles .html Twig templates and re-introduces the Twig variables
      * rewrite_url and is_front_page
      *
      * @param string &$templateName  file name of the template
@@ -107,7 +107,6 @@ class ThemeApi1Plugin extends AbstractPlugin
                     $twig->loadTemplate($templateNameInfo['filename'] . '.html');
 
                     $templateName = $templateNameInfo['filename'] . '.html';
-                    $templateNameInfo['extension'] = 'html';
                 } catch (TwigLoaderError $e) {
                     // template doesn't exist, Twig will very likely fail later
                 }

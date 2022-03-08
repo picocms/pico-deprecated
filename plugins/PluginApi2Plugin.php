@@ -41,7 +41,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
      *
      * @var string[]
      */
-    protected $dependsOn = [ ThemeApi2Plugin::class ];
+    protected $dependsOn = [ PluginApi3Plugin::class, ThemeApi2Plugin::class ];
 
     /**
      * Map of core events matching event signatures of older API versions

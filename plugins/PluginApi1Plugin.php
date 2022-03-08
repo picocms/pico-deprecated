@@ -24,6 +24,7 @@ namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
 use PicoDeprecated;
+use RuntimeException;
 use Twig\Environment as TwigEnvironment;
 
 /**
@@ -135,7 +136,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
             if (!isset($originalPlugins[$pluginName])) {
                 $this->getPico()->loadPlugin($plugin);
             } elseif ($plugin !== $originalPlugins[$pluginName]) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     "A Pico plugin using API version 1 tried to replace Pico plugin '" . $pluginName . "' using the "
                     . "onPluginsLoaded() event, however, replacing plugins was removed with API version 2"
                 );
@@ -146,7 +147,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
 
         if ($originalPlugins) {
             $removedPluginsList = implode("', '", array_keys($originalPlugins));
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "A Pico plugin using API version 1 tried to unload the Pico plugin(s) '" . $removedPluginsList . "' "
                 . "using the onPluginsLoaded() event, however, unloading plugins was removed with API version 2"
             );

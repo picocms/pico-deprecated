@@ -24,6 +24,7 @@ namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
 use PicoDeprecated;
+use ReflectionObject;
 
 /**
  * Maintains backward compatibility with older Pico versions
@@ -77,18 +78,15 @@ class MainPlugin extends AbstractPlugin
     protected function loadScriptedConfig(string $configFile): void
     {
         // scope isolated require()
-        $includeConfigClosure = function ($configFile) {
+        $includeConfigClosure = static function ($configFile) {
             require($configFile);
             return (isset($config) && is_array($config)) ? $config : [];
         };
-        if (PHP_VERSION_ID >= 50400) {
-            $includeConfigClosure = $includeConfigClosure->bindTo(null);
-        }
 
         $scriptedConfig = $includeConfigClosure($configFile);
 
         if (!empty($scriptedConfig)) {
-            $picoReflector = new \ReflectionObject($this->getPico());
+            $picoReflector = new ReflectionObject($this->getPico());
             $picoConfigReflector = $picoReflector->getProperty('config');
             $picoConfigReflector->setAccessible(true);
 
@@ -104,6 +102,6 @@ class MainPlugin extends AbstractPlugin
      */
     public function getApiVersion(): int
     {
-        return PicoDeprecated::API_VERSION_3;
+        return PicoDeprecated::API_VERSION_4;
     }
 }

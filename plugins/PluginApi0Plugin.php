@@ -25,6 +25,7 @@ namespace picocms\PicoDeprecated\Plugin;
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
 use Pico;
 use PicoDeprecated;
+use ReflectionClass;
 use Twig\Environment as TwigEnvironment;
 
 /**
@@ -122,7 +123,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
             define('CONFIG_DIR', $this->getPico()->getConfigDir());
         }
         if (!defined('LIB_DIR')) {
-            $picoReflector = new \ReflectionClass(Pico::class);
+            $picoReflector = new ReflectionClass(Pico::class);
             define('LIB_DIR', dirname($picoReflector->getFileName()) . '/');
         }
         if (!defined('PLUGINS_DIR')) {
@@ -262,8 +263,8 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      * without its file extension. The file extension is re-added later.
      *
      * @param TwigEnvironment &$twig          Twig instance
-     * @param string          &$templateName  file name of the template
      * @param array           &$twigVariables template variables
+     * @param string          &$templateName  file name of the template
      */
     public function onPageRendering(TwigEnvironment &$twig, array &$twigVariables, string &$templateName): void
     {
