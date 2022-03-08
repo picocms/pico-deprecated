@@ -18,6 +18,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
@@ -95,7 +97,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
      *
      * @param array $config
      */
-    public function onConfigLoaded(array &$config)
+    public function onConfigLoaded(array &$config): void
     {
         $this->config = &$config;
 
@@ -112,7 +114,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
      * @param int    $themeApiVersion API version of the theme
      * @param array  &$themeConfig    config array of the theme
      */
-    public function onThemeLoaded($theme, $themeApiVersion, array &$themeConfig)
+    public function onThemeLoaded(string $theme, int $themeApiVersion, array &$themeConfig): void
     {
         $this->triggerEvent('onConfigLoaded', [ &$this->config ]);
     }
@@ -120,7 +122,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_3;
     }
@@ -128,7 +130,7 @@ class PluginApi2Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersionSupport()
+    public function getApiVersionSupport(): int
     {
         return PicoDeprecated::API_VERSION_2;
     }

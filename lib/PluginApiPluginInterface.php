@@ -10,6 +10,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated;
 
 /**
@@ -28,12 +30,12 @@ interface PluginApiPluginInterface extends PluginInterface
      * @param string $eventName name of the triggered event
      * @param array  $params    passed parameters
      */
-    public function handleCustomEvent($eventName, array $params = []);
+    public function handleCustomEvent(string $eventName, array $params = []): void;
 
     /**
      * Returns the API version this plugin maintains backward compatibility for
      *
      * @return int
      */
-    public function getApiVersionSupport();
+    public function getApiVersionSupport(): int;
 }

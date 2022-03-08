@@ -10,6 +10,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
@@ -76,7 +78,7 @@ class PluginApi3Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_4;
     }
@@ -84,7 +86,7 @@ class PluginApi3Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersionSupport()
+    public function getApiVersionSupport(): int
     {
         return PicoDeprecated::API_VERSION_3;
     }

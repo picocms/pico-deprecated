@@ -18,6 +18,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
@@ -59,7 +61,7 @@ class ThemeApi2Plugin extends AbstractPlugin
      *
      * @param array &$config array of config variables
      */
-    public function onConfigLoaded(array &$config)
+    public function onConfigLoaded(array &$config): void
     {
         if (isset($config['twig_config']['autoescape'])) {
             $this->twigEscapeStrategy = $config['twig_config']['autoescape'];
@@ -72,7 +74,7 @@ class ThemeApi2Plugin extends AbstractPlugin
      * @param string &$templateName  file name of the template
      * @param array  &$twigVariables template variables
      */
-    public function onPageRendering(&$templateName, array &$twigVariables)
+    public function onPageRendering(string &$templateName, array &$twigVariables): void
     {
         $twigVariables['prev_page'] = &$twigVariables['previous_page'];
         $twigVariables['base_dir'] = rtrim($this->getPico()->getRootDir(), '/');
@@ -87,7 +89,7 @@ class ThemeApi2Plugin extends AbstractPlugin
      *
      * @param TwigEnvironment &$twig Twig instance
      */
-    public function onTwigRegistered(TwigEnvironment &$twig)
+    public function onTwigRegistered(TwigEnvironment &$twig): void
     {
         if ($twig->hasExtension(TwigEscaperExtension::class)) {
             /** @var TwigEscaperExtension $escaperExtension */
@@ -110,7 +112,7 @@ class ThemeApi2Plugin extends AbstractPlugin
      *
      * @return string|false escape strategy for this template
      */
-    public function twigEscapeStrategy($templateName)
+    public function twigEscapeStrategy(string $templateName)
     {
         $twigConfig = $this->getPico()->getConfig('twig_config');
         $escapeStrategy = $twigConfig['autoescape'];
@@ -163,7 +165,7 @@ class ThemeApi2Plugin extends AbstractPlugin
      *
      * @return object|null either the matching plugin instance or NULL
      */
-    protected function getPluginFromPath($path)
+    protected function getPluginFromPath(string $path): ?object
     {
         $plugins = $this->getPico()->getPlugins();
         foreach ($this->pluginPaths as $pluginName => $pluginPath) {
@@ -201,7 +203,7 @@ class ThemeApi2Plugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_3;
     }

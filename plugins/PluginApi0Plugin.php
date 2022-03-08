@@ -18,6 +18,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
@@ -77,7 +79,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param object[] $plugins loaded plugin instances
      */
-    public function onPluginsLoaded(array &$plugins)
+    public function onPluginsLoaded(array &$plugins): void
     {
         $this->triggerEvent('plugins_loaded');
     }
@@ -92,7 +94,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param array &$config array of config variables
      */
-    public function onConfigLoaded(array &$config)
+    public function onConfigLoaded(array &$config): void
     {
         $this->defineConfigConstants($config);
 
@@ -111,7 +113,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param array &$config array of config variables
      */
-    protected function defineConfigConstants(array &$config)
+    protected function defineConfigConstants(array &$config): void
     {
         if (!defined('ROOT_DIR')) {
             define('ROOT_DIR', $this->getPico()->getRootDir());
@@ -148,7 +150,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param string &$file absolute path to the content file to serve
      */
-    public function onRequestFile(&$file)
+    public function onRequestFile(string &$file): void
     {
         $this->requestFile = &$file;
     }
@@ -158,7 +160,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param string &$rawContent raw file contents
      */
-    public function on404ContentLoaded(&$rawContent)
+    public function on404ContentLoaded(string &$rawContent): void
     {
         $this->triggerEvent('after_404_load_content', [ &$this->requestFile, &$rawContent ]);
     }
@@ -168,7 +170,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param string &$rawContent raw file contents
      */
-    public function onContentLoaded(&$rawContent)
+    public function onContentLoaded(string &$rawContent): void
     {
         $this->triggerEvent('after_load_content', [ &$this->requestFile, &$rawContent ]);
     }
@@ -179,7 +181,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      * @param string   &$rawContent raw file contents
      * @param string[] &$headers    list of known meta header fields
      */
-    public function onMetaParsing(&$rawContent, array &$headers)
+    public function onMetaParsing(string &$rawContent, array &$headers): void
     {
         $this->triggerEvent('before_read_file_meta', [ &$headers ]);
     }
@@ -189,7 +191,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      *
      * @param array &$pageData data of the loaded page
      */
-    public function onSinglePageLoaded(array &$pageData)
+    public function onSinglePageLoaded(array &$pageData): void
     {
         $this->triggerEvent('get_page_data', [ &$pageData, $pageData['meta'] ]);
     }
@@ -213,7 +215,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
         array &$currentPage = null,
         array &$previousPage = null,
         array &$nextPage = null
-    ) {
+    ): void {
         // remove keys of pages array
         $plainPages = [];
         foreach ($pages as &$plainPageData) {
@@ -263,7 +265,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
      * @param string          &$templateName  file name of the template
      * @param array           &$twigVariables template variables
      */
-    public function onPageRendering(TwigEnvironment &$twig, array &$twigVariables, &$templateName)
+    public function onPageRendering(TwigEnvironment &$twig, array &$twigVariables, string &$templateName): void
     {
         $templateNameInfo = pathinfo($templateName) + [ 'extension' => '' ];
 
@@ -280,7 +282,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function handleCustomEvent($eventName, array $params = [])
+    public function handleCustomEvent(string $eventName, array $params = []): void
     {
         // never trigger custom events
     }
@@ -288,7 +290,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function triggerEvent($eventName, array $params = [])
+    public function triggerEvent(string $eventName, array $params = []): void
     {
         // we don't support compat plugins using API v0, so no need to take care of compat plugins here
         // API v0 events are also triggered on plugins using API v1 (but not later)
@@ -305,7 +307,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_1;
     }
@@ -313,7 +315,7 @@ class PluginApi0Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersionSupport()
+    public function getApiVersionSupport(): int
     {
         return PicoDeprecated::API_VERSION_0;
     }

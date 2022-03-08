@@ -18,6 +18,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
@@ -45,7 +47,7 @@ class MainPlugin extends AbstractPlugin
      *
      * @param object[] $plugins loaded plugin instances
      */
-    public function onPluginsLoaded(array $plugins)
+    public function onPluginsLoaded(array $plugins): void
     {
         // deprecated since Pico 1.0
         if (is_file($this->getPico()->getRootDir() . 'config.php')) {
@@ -72,7 +74,7 @@ class MainPlugin extends AbstractPlugin
      *
      * @param string $configFile path to the config file to load
      */
-    protected function loadScriptedConfig($configFile)
+    protected function loadScriptedConfig(string $configFile): void
     {
         // scope isolated require()
         $includeConfigClosure = function ($configFile) {
@@ -100,7 +102,7 @@ class MainPlugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_3;
     }

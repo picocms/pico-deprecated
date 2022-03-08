@@ -18,6 +18,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPlugin;
@@ -49,7 +51,7 @@ class ThemeApi1Plugin extends AbstractPlugin
      *
      * @param string[] &$meta parsed meta data
      */
-    public function onMetaParsed(array &$meta)
+    public function onMetaParsed(array &$meta): void
     {
         $this->lowerFileMeta($meta);
     }
@@ -61,7 +63,7 @@ class ThemeApi1Plugin extends AbstractPlugin
      *
      * @param array &$pageData data of the loaded page
      */
-    public function onSinglePageLoaded(array &$pageData)
+    public function onSinglePageLoaded(array &$pageData): void
     {
         // don't lower the file meta of the requested page,
         // it was already lowered during the onMetaParsed event
@@ -79,7 +81,7 @@ class ThemeApi1Plugin extends AbstractPlugin
      * @param string &$templateName  file name of the template
      * @param array  &$twigVariables template variables
      */
-    public function onPageRendering(&$templateName, array &$twigVariables)
+    public function onPageRendering(string &$templateName, array &$twigVariables): void
     {
         if (!isset($twigVariables['rewrite_url'])) {
             $twigVariables['rewrite_url'] = $this->getPico()->isUrlRewritingEnabled();
@@ -121,7 +123,7 @@ class ThemeApi1Plugin extends AbstractPlugin
      *
      * @param array &$meta meta data
      */
-    protected function lowerFileMeta(array &$meta)
+    protected function lowerFileMeta(array &$meta): void
     {
         $metaHeaders = $this->getPico()->getMetaHeaders();
 
@@ -153,7 +155,7 @@ class ThemeApi1Plugin extends AbstractPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_3;
     }

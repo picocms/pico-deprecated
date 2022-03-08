@@ -18,6 +18,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated\Plugin;
 
 use picocms\PicoDeprecated\AbstractPluginApiPlugin;
@@ -123,7 +125,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param object[] $plugins loaded plugin instances
      */
-    public function onPluginsLoaded(array $plugins)
+    public function onPluginsLoaded(array $plugins): void
     {
         $originalPlugins = $plugins;
 
@@ -158,7 +160,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param string &$file absolute path to the content file to serve
      */
-    public function onRequestFile(&$file)
+    public function onRequestFile(string &$file): void
     {
         $this->requestFile = &$file;
     }
@@ -166,7 +168,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     /**
      * Triggers the onContentLoading event
      */
-    public function onContentLoading()
+    public function onContentLoading(): void
     {
         $this->triggerEvent('onContentLoading', [ &$this->requestFile ]);
     }
@@ -178,7 +180,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param string &$rawContent raw file contents
      */
-    public function onContentLoaded(&$rawContent)
+    public function onContentLoaded(string &$rawContent): void
     {
         $this->rawContent = &$rawContent;
     }
@@ -186,7 +188,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     /**
      * Triggers the on404ContentLoading event
      */
-    public function on404ContentLoading()
+    public function on404ContentLoading(): void
     {
         $this->triggerEvent('on404ContentLoading', [ &$this->requestFile ]);
     }
@@ -196,7 +198,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @see PluginApi1Plugin::onMetaHeaders()
      */
-    public function onMetaParsing()
+    public function onMetaParsing(): void
     {
         $headersFlipped = $this->getFlippedMetaHeaders();
         $this->triggerEvent('onMetaParsing', [ &$this->rawContent, &$headersFlipped ]);
@@ -208,7 +210,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param string[] &$meta parsed meta data
      */
-    public function onMetaParsed(array &$meta)
+    public function onMetaParsed(array &$meta): void
     {
         $this->triggerEvent('onMetaParsed', [ &$meta ]);
         $this->triggerEvent('onParsedownRegistration');
@@ -217,7 +219,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     /**
      * Triggers the onContentParsing event
      */
-    public function onContentParsing()
+    public function onContentParsing(): void
     {
         $this->triggerEvent('onContentParsing', [ &$this->rawContent ]);
     }
@@ -229,7 +231,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param array[] &$pages sorted list of all known pages
      */
-    public function onPagesLoaded(array &$pages)
+    public function onPagesLoaded(array &$pages): void
     {
         $this->pages = &$pages;
     }
@@ -245,7 +247,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
         array &$currentPage = null,
         array &$previousPage = null,
         array &$nextPage = null
-    ) {
+    ): void {
         $this->triggerEvent('onPagesLoaded', [ &$this->pages, &$currentPage, &$previousPage, &$nextPage ]);
 
         $this->triggerEvent('onTwigRegistration');
@@ -258,7 +260,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      * @param string &$templateName  file name of the template
      * @param array  &$twigVariables template variables
      */
-    public function onPageRendering(&$templateName, array &$twigVariables)
+    public function onPageRendering(string &$templateName, array &$twigVariables): void
     {
         $this->triggerEvent('onPageRendering', [ &$this->twig, &$twigVariables, &$templateName ]);
     }
@@ -273,7 +275,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *     key specifies the YAML key to search for, the array value is later
      *     used to access the found value
      */
-    public function onMetaHeaders(array &$headers)
+    public function onMetaHeaders(array &$headers): void
     {
         $this->metaHeaders = &$headers;
 
@@ -289,7 +291,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param TwigEnvironment &$twig Twig instance
      */
-    public function onTwigRegistered(TwigEnvironment &$twig)
+    public function onTwigRegistered(TwigEnvironment &$twig): void
     {
         $this->twig = $twig;
     }
@@ -306,7 +308,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @return array flipped meta headers
      */
-    protected function getFlippedMetaHeaders()
+    protected function getFlippedMetaHeaders(): array
     {
         if ($this->metaHeaders === null) {
             // make sure to trigger the onMetaHeaders event
@@ -321,7 +323,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
      *
      * @param array $headersFlipped flipped headers array
      */
-    protected function updateFlippedMetaHeaders(array $headersFlipped)
+    protected function updateFlippedMetaHeaders(array $headersFlipped): void
     {
         foreach ($this->metaHeaders as $name => $key) {
             if (!isset($headersFlipped[$key])) {
@@ -337,7 +339,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_2;
     }
@@ -345,7 +347,7 @@ class PluginApi1Plugin extends AbstractPluginApiPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersionSupport()
+    public function getApiVersionSupport(): int
     {
         return PicoDeprecated::API_VERSION_1;
     }

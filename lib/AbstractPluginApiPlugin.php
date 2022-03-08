@@ -10,6 +10,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated;
 
 /**
@@ -40,7 +42,7 @@ abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginA
     /**
      * {@inheritDoc}
      */
-    public function handleEvent($eventName, array $params)
+    public function handleEvent(string $eventName, array $params): void
     {
         parent::handleEvent($eventName, $params);
 
@@ -55,7 +57,7 @@ abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginA
     /**
      * {@inheritDoc}
      */
-    public function handleCustomEvent($eventName, array $params = [])
+    public function handleCustomEvent(string $eventName, array $params = []): void
     {
         $this->getPicoDeprecated()->triggerEvent($this->getApiVersionSupport(), $eventName, $params);
     }
@@ -66,7 +68,7 @@ abstract class AbstractPluginApiPlugin extends AbstractPlugin implements PluginA
      * @param string $eventName name of the event to trigger
      * @param array  $params    optional parameters to pass
      */
-    protected function triggerEvent($eventName, array $params = [])
+    protected function triggerEvent(string $eventName, array $params = []): void
     {
         $apiVersion = $this->getApiVersionSupport();
         $picoDeprecated = $this->getPicoDeprecated();

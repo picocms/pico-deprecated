@@ -10,6 +10,8 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
 namespace picocms\PicoDeprecated;
 
 use Pico;
@@ -73,7 +75,7 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function handleEvent($eventName, array $params)
+    public function handleEvent(string $eventName, array $params): void
     {
         if (method_exists($this, $eventName)) {
             call_user_func_array([ $this, $eventName ], $params);
@@ -83,7 +85,7 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getPico()
+    public function getPico(): Pico
     {
         return $this->pico;
     }
@@ -91,7 +93,7 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getPicoDeprecated()
+    public function getPicoDeprecated(): PicoDeprecated
     {
         return $this->picoDeprecated;
     }
@@ -99,7 +101,7 @@ abstract class AbstractPlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return (array) $this->dependsOn;
     }
