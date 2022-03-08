@@ -15,8 +15,5 @@ desktop.ini
 /vendor
 
 # Build system
-/.build/build
-/.build/deploy
-/.build/ci-tools
 /pico-deprecated-release-*.tar.gz
 /pico-deprecated-release-*.zip
