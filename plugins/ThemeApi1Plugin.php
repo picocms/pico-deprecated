@@ -100,11 +100,11 @@ class ThemeApi1Plugin extends AbstractPlugin
         $twig = $this->getPico()->getTwig();
 
         try {
-            $twig->loadTemplate($templateName);
+            $twig->load($templateName);
         } catch (TwigLoaderError $e) {
             if ($templateNameInfo['extension'] === 'twig') {
                 try {
-                    $twig->loadTemplate($templateNameInfo['filename'] . '.html');
+                    $twig->load($templateNameInfo['filename'] . '.html');
 
                     $templateName = $templateNameInfo['filename'] . '.html';
                 } catch (TwigLoaderError $e) {
