@@ -21,6 +21,23 @@ Pico Deprecated Changelog
           because they are already listed in Pico's changelog. Only functional
           changes and/or BC-breaking changes are listed below.
 
+### Version 3.0.0-beta.1
+Released: -
+
+```
+* [New] Update to API version 4 (no functional changes necessary)
+* [New] Add new continous integration (CI) pipeline using GitHub Actions
+* [New] Add new build script and Makefile to simplify PicoDeprecated's build
+        and release process; see Pico's `CONTRIBUTING.md` for details
+* [New] Add `PicoDeprecated::VERSION` and `PicoDeprecated::VERSION_ID`
+        constants (similar to Pico's matching constants)
+* [New] Add plugin and theme compatibility plugin for API version 3
+* [Changed] Enable PHP strict typing
+* [Changed] ! Move classes to `\picocms\PicoDeprecated\…` PHP namespace
+* [Fixed] Don't instantiate compatibility plugins multiple times
+* [Fixed] Update Twig API usage to be compatible with Twig 3.3
+```
+
 ### Version 3.0.0-alpha.2
 Released: 2020-12-24
 
