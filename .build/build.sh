@@ -273,10 +273,9 @@ find vendor/ -type d -path 'vendor/*/*/.git' -print0 | xargs -0 rm -rf
 echo
 
 # restore picocms/pico dependency
-# FIXME: https://github.com/composer/composer/issues/10593
-#echo "Restoring '$PICO_PROJECT' dependency..."
-#"$COMPOSER" require --no-update "$PICO_PROJECT self.version"
-#echo
+echo "Restoring '$PICO_PROJECT' dependency..."
+"$COMPOSER" require --no-update "$PICO_PROJECT self.version"
+echo
 
 # create release archives
 ARCHIVE_FILENAME="$BUILD_NAME-release-$VERSION"
