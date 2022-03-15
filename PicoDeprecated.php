@@ -129,11 +129,17 @@ class PicoDeprecated extends AbstractPicoPlugin
         }
 
         if (!class_exists(MainPlugin::class)) {
-            die(
-                "Cannot find PicoDeprecated's 'vendor/autoload.php'. If you're using a composer-based Pico install, "
+            throw new RuntimeException(
+                "Cannot find PicoDeprecated's 'vendor/autoload.php'. If you're using a Composer-based Pico install, "
                 . "run `composer update`. If you're rather trying to use one of PicoDeprecated's pre-built release "
                 . "packages, make sure to download PicoDeprecated's release package matching Pico's version named "
-                . "'pico-deprecated-release-v*.tar.gz' (don't download a source code package)."
+                . "'pico-deprecated-release-v*.tar.gz'; make sure not to download a source code package."
+            );
+        }
+
+        if ($pico::VERSION_ID !== self::VERSION_ID) {
+            throw new RuntimeException(
+                'PicoDeprecated v' . self::VERSION . ' is incompatible with Pico v' . $pico::VERSION
             );
         }
 
