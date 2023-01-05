@@ -29,13 +29,6 @@ use PicoDeprecated;
 class PluginApi3Plugin extends AbstractPluginApiPlugin
 {
     /**
-     * This plugin extends {@see ThemeApi3Plugin}
-     *
-     * @var string[]
-     */
-    protected $dependsOn = [ ThemeApi3Plugin::class ];
-
-    /**
      * Map of core events matching event signatures of older API versions
      *
      * @see AbstractPluginApiPlugin::handleEvent()
