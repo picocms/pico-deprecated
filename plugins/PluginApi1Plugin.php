@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoPluginApi1CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PluginApi1Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,50 +18,58 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPluginApiPlugin;
+use PicoDeprecated;
+use RuntimeException;
+use Twig\Environment as TwigEnvironment;
+
 /**
  * Maintains backward compatibility with plugins using API version 1, written
  * for Pico 1.0
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
- * @version 2.1
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
+ * @version 3.0
  */
-class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
+class PluginApi1Plugin extends AbstractPluginApiPlugin
 {
     /**
-     * This plugin extends {@see PicoPluginApi2CompatPlugin} and
-     * {@see PicoThemeApi1CompatPlugin}
+     * This plugin extends {@see PluginApi2Plugin} and {@see ThemeApi1Plugin}
      *
      * @var string[]
      */
-    protected $dependsOn = array('PicoPluginApi2CompatPlugin', 'PicoThemeApi1CompatPlugin');
+    protected $dependsOn = [ PluginApi2Plugin::class, ThemeApi1Plugin::class ];
 
     /**
      * Map of core events matching event signatures of older API versions
      *
-     * @see AbstractPicoPluginApiCompatPlugin::handleEvent()
+     * @see AbstractPluginApiPlugin::handleEvent()
      *
      * @var array<string,string>
      */
-    protected $eventAliases = array(
-        'onConfigLoaded'      => array('onConfigLoaded'),
-        'onRequestUrl'        => array('onRequestUrl'),
-        'onRequestFile'       => array('onRequestFile'),
-        'on404ContentLoaded'  => array('on404ContentLoaded'),
-        'onContentLoaded'     => array('onContentLoaded'),
-        'onContentPrepared'   => array('onContentPrepared'),
-        'onContentParsed'     => array('onContentParsed'),
-        'onPagesLoading'      => array('onPagesLoading'),
-        'onSinglePageLoaded'  => array('onSinglePageLoaded'),
-        'onPageRendered'      => array('onPageRendered')
-    );
+    protected $eventAliases = [
+        'onConfigLoaded' =>     [ 'onConfigLoaded' ],
+        'onRequestUrl' =>       [ 'onRequestUrl' ],
+        'onRequestFile' =>      [ 'onRequestFile' ],
+        'on404ContentLoaded' => [ 'on404ContentLoaded' ],
+        'onContentLoaded' =>    [ 'onContentLoaded' ],
+        'onContentPrepared' =>  [ 'onContentPrepared' ],
+        'onContentParsed' =>    [ 'onContentParsed' ],
+        'onPagesLoading' =>     [ 'onPagesLoading' ],
+        'onSinglePageLoaded' => [ 'onSinglePageLoaded' ],
+        'onPageRendered' =>     [ 'onPageRendered' ],
+    ];
 
     /**
      * Pico's request file
      *
      * @see Pico::$requestFile
-     * @see PicoPluginApi1CompatPlugin::onRequestFile()
+     * @see PluginApi1Plugin::onRequestFile()
      *
      * @var string|null
      */
@@ -71,7 +79,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's raw contents
      *
      * @see Pico::$rawContent
-     * @see PicoPluginApi1CompatPlugin::onContentLoaded()
+     * @see PluginApi1Plugin::onContentLoaded()
      *
      * @var string|null
      */
@@ -81,7 +89,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's meta headers array
      *
      * @see Pico::$metaHeaders
-     * @see PicoPluginApi1CompatPlugin::onMetaHeaders()
+     * @see PluginApi1Plugin::onMetaHeaders()
      *
      * @var array<string,string>|null
      */
@@ -91,7 +99,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's pages array
      *
      * @see Pico::$pages
-     * @see PicoPluginApi1CompatPlugin::onPagesLoaded()
+     * @see PluginApi1Plugin::onPagesLoaded()
      *
      * @var array[]|null
      */
@@ -101,9 +109,9 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * Pico's Twig instance
      *
      * @see Pico::$twig
-     * @see PicoPluginApi1CompatPlugin::onTwigRegistered()
+     * @see PluginApi1Plugin::onTwigRegistered()
      *
-     * @var Twig_Environment|null
+     * @var TwigEnvironment|null
      */
     protected $twig;
 
@@ -118,11 +126,11 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      *
      * @param object[] $plugins loaded plugin instances
      */
-    public function onPluginsLoaded(array $plugins)
+    public function onPluginsLoaded(array $plugins): void
     {
         $originalPlugins = $plugins;
 
-        $this->triggerEvent('onPluginsLoaded', array(&$plugins));
+        $this->triggerEvent('onPluginsLoaded', [ &$plugins ]);
 
         foreach ($plugins as $pluginName => $plugin) {
             if (!isset($originalPlugins[$pluginName])) {
@@ -147,13 +155,13 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$requestFile
+     * Sets PluginApi1Plugin::$requestFile
      *
-     * @see PicoPluginApi1CompatPlugin::$requestFile
+     * @see PluginApi1Plugin::$requestFile
      *
      * @param string &$file absolute path to the content file to serve
      */
-    public function onRequestFile(&$file)
+    public function onRequestFile(string &$file): void
     {
         $this->requestFile = &$file;
     }
@@ -161,19 +169,19 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     /**
      * Triggers the onContentLoading event
      */
-    public function onContentLoading()
+    public function onContentLoading(): void
     {
-        $this->triggerEvent('onContentLoading', array(&$this->requestFile));
+        $this->triggerEvent('onContentLoading', [ &$this->requestFile ]);
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$rawContent
+     * Sets PluginApi1Plugin::$rawContent
      *
-     * @see PicoPluginApi1CompatPlugin::$rawContent
+     * @see PluginApi1Plugin::$rawContent
      *
      * @param string &$rawContent raw file contents
      */
-    public function onContentLoaded(&$rawContent)
+    public function onContentLoaded(string &$rawContent): void
     {
         $this->rawContent = &$rawContent;
     }
@@ -181,20 +189,20 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     /**
      * Triggers the on404ContentLoading event
      */
-    public function on404ContentLoading()
+    public function on404ContentLoading(): void
     {
-        $this->triggerEvent('on404ContentLoading', array(&$this->requestFile));
+        $this->triggerEvent('on404ContentLoading', [ &$this->requestFile ]);
     }
 
     /**
      * Triggers the onMetaParsing event
      *
-     * @see PicoPluginApi1CompatPlugin::onMetaHeaders()
+     * @see PluginApi1Plugin::onMetaHeaders()
      */
-    public function onMetaParsing()
+    public function onMetaParsing(): void
     {
         $headersFlipped = $this->getFlippedMetaHeaders();
-        $this->triggerEvent('onMetaParsing', array(&$this->rawContent, &$headersFlipped));
+        $this->triggerEvent('onMetaParsing', [ &$this->rawContent, &$headersFlipped ]);
         $this->updateFlippedMetaHeaders($headersFlipped);
     }
 
@@ -203,28 +211,28 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      *
      * @param string[] &$meta parsed meta data
      */
-    public function onMetaParsed(array &$meta)
+    public function onMetaParsed(array &$meta): void
     {
-        $this->triggerEvent('onMetaParsed', array(&$meta));
+        $this->triggerEvent('onMetaParsed', [ &$meta ]);
         $this->triggerEvent('onParsedownRegistration');
     }
 
     /**
      * Triggers the onContentParsing event
      */
-    public function onContentParsing()
+    public function onContentParsing(): void
     {
-        $this->triggerEvent('onContentParsing', array(&$this->rawContent));
+        $this->triggerEvent('onContentParsing', [ &$this->rawContent ]);
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$pages
+     * Sets PluginApi1Plugin::$pages
      *
-     * @see PicoPluginApi1CompatPlugin::$pages
+     * @see PluginApi1Plugin::$pages
      *
      * @param array[] &$pages sorted list of all known pages
      */
-    public function onPagesLoaded(array &$pages)
+    public function onPagesLoaded(array &$pages): void
     {
         $this->pages = &$pages;
     }
@@ -240,8 +248,8 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
         array &$currentPage = null,
         array &$previousPage = null,
         array &$nextPage = null
-    ) {
-        $this->triggerEvent('onPagesLoaded', array(&$this->pages, &$currentPage, &$previousPage, &$nextPage));
+    ): void {
+        $this->triggerEvent('onPagesLoaded', [ &$this->pages, &$currentPage, &$previousPage, &$nextPage ]);
 
         $this->triggerEvent('onTwigRegistration');
         $this->getPico()->getTwig();
@@ -253,38 +261,38 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      * @param string &$templateName  file name of the template
      * @param array  &$twigVariables template variables
      */
-    public function onPageRendering(&$templateName, array &$twigVariables)
+    public function onPageRendering(string &$templateName, array &$twigVariables): void
     {
-        $this->triggerEvent('onPageRendering', array(&$this->twig, &$twigVariables, &$templateName));
+        $this->triggerEvent('onPageRendering', [ &$this->twig, &$twigVariables, &$templateName ]);
     }
 
     /**
      * Triggers the onMetaHeaders event with flipped meta headers and sets
-     * PicoPluginApi1CompatPlugin::$metaHeaders
+     * PluginApi1Plugin::$metaHeaders
      *
-     * @see PicoPluginApi1CompatPlugin::$metaHeaders
+     * @see PluginApi1Plugin::$metaHeaders
      *
      * @param string[] &$headers list of known meta header fields; the array
      *     key specifies the YAML key to search for, the array value is later
      *     used to access the found value
      */
-    public function onMetaHeaders(array &$headers)
+    public function onMetaHeaders(array &$headers): void
     {
         $this->metaHeaders = &$headers;
 
         $headersFlipped = $this->getFlippedMetaHeaders();
-        $this->triggerEvent('onMetaHeaders', array(&$headersFlipped));
+        $this->triggerEvent('onMetaHeaders', [ &$headersFlipped ]);
         $this->updateFlippedMetaHeaders($headersFlipped);
     }
 
     /**
-     * Sets PicoPluginApi1CompatPlugin::$twig
+     * Sets PluginApi1Plugin::$twig
      *
-     * @see PicoPluginApi1CompatPlugin::$twig
+     * @see PluginApi1Plugin::$twig
      *
-     * @param Twig_Environment &$twig Twig instance
+     * @param TwigEnvironment &$twig Twig instance
      */
-    public function onTwigRegistered(Twig_Environment &$twig)
+    public function onTwigRegistered(TwigEnvironment &$twig): void
     {
         $this->twig = $twig;
     }
@@ -301,22 +309,22 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
      *
      * @return array flipped meta headers
      */
-    protected function getFlippedMetaHeaders()
+    protected function getFlippedMetaHeaders(): array
     {
         if ($this->metaHeaders === null) {
             // make sure to trigger the onMetaHeaders event
             $this->getPico()->getMetaHeaders();
         }
 
-        return array_flip($this->metaHeaders ?: array());
+        return array_flip($this->metaHeaders ?: []);
     }
 
     /**
-     * Syncs PicoPluginApi1CompatPlugin::$metaHeaders with a flipped headers array
+     * Syncs PluginApi1Plugin::$metaHeaders with a flipped headers array
      *
      * @param array $headersFlipped flipped headers array
      */
-    protected function updateFlippedMetaHeaders(array $headersFlipped)
+    protected function updateFlippedMetaHeaders(array $headersFlipped): void
     {
         foreach ($this->metaHeaders as $name => $key) {
             if (!isset($headersFlipped[$key])) {
@@ -332,7 +340,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_2;
     }
@@ -340,7 +348,7 @@ class PicoPluginApi1CompatPlugin extends AbstractPicoPluginApiCompatPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersionSupport()
+    public function getApiVersionSupport(): int
     {
         return PicoDeprecated::API_VERSION_1;
     }
