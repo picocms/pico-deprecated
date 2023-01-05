@@ -90,10 +90,10 @@ class ThemeApi2Plugin extends AbstractPlugin
     }
 
     /**
-     * Registers PluginApi2Plugin::twigEscapeStrategy() as Twig's default
+     * Registers ThemeApi2Plugin::twigEscapeStrategy() as Twig's default
      * escape strategy
      *
-     * @see PluginApi2Plugin::twigEscapeStrategy()
+     * @see ThemeApi2Plugin::twigEscapeStrategy()
      *
      * @param TwigEnvironment &$twig Twig instance
      */
