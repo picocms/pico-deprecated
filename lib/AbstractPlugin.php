@@ -4,32 +4,39 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/lib/AbstractPicoCompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/lib/AbstractPlugin.php>
  *
  * SPDX-License-Identifier: MIT
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
+namespace picocms\PicoDeprecated;
+
+use Pico;
+use PicoDeprecated;
+
 /**
  * Abstract class to extend from when implementing a PicoDeprecated
  * compatibility plugin
  *
- * Please refer to {@see PicoCompatPluginInterface} for more information about
- * how to develop a PicoDeprecated compatibility plugin.
+ * Please refer to {@see PicoPluginInterface} for more information about how to
+ * develop a PicoDeprecated compatibility plugin.
  *
- * @see PicoCompatPluginInterface
+ * @see PicoPluginInterface
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
- * @version 2.1
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
+ * @version 3.0
  */
-abstract class AbstractPicoCompatPlugin implements PicoCompatPluginInterface
+abstract class AbstractPlugin implements PluginInterface
 {
     /**
      * Current instance of Pico
      *
-     * @see PicoCompatPluginInterface::getPico()
+     * @see PicoPluginInterface::getPico()
      *
      * @var Pico
      */
@@ -38,7 +45,7 @@ abstract class AbstractPicoCompatPlugin implements PicoCompatPluginInterface
     /**
      * Instance of the main PicoDeprecated plugin
      *
-     * @see PicoCompatPluginInterface::getPicoDeprecated()
+     * @see PluginInterface::getPicoDeprecated()
      *
      * @var PicoDeprecated
      */
@@ -47,11 +54,11 @@ abstract class AbstractPicoCompatPlugin implements PicoCompatPluginInterface
     /**
      * List of plugins which this plugin depends on
      *
-     * @see PicoCompatPluginInterface::getDependencies()
+     * @see PicoPluginInterface::getDependencies()
      *
      * @var string[]
      */
-    protected $dependsOn = array();
+    protected $dependsOn = [];
 
     /**
      * Constructs a new instance of a PicoDeprecated compatibility plugin
@@ -68,17 +75,17 @@ abstract class AbstractPicoCompatPlugin implements PicoCompatPluginInterface
     /**
      * {@inheritDoc}
      */
-    public function handleEvent($eventName, array $params)
+    public function handleEvent(string $eventName, array $params): void
     {
         if (method_exists($this, $eventName)) {
-            call_user_func_array(array($this, $eventName), $params);
+            call_user_func_array([ $this, $eventName ], $params);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getPico()
+    public function getPico(): Pico
     {
         return $this->pico;
     }
@@ -86,7 +93,7 @@ abstract class AbstractPicoCompatPlugin implements PicoCompatPluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getPicoDeprecated()
+    public function getPicoDeprecated(): PicoDeprecated
     {
         return $this->picoDeprecated;
     }
@@ -94,7 +101,7 @@ abstract class AbstractPicoCompatPlugin implements PicoCompatPluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return (array) $this->dependsOn;
     }

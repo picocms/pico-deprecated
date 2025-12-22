@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoMainCompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/MainPlugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,15 +18,23 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPlugin;
+use PicoDeprecated;
+use ReflectionObject;
+
 /**
  * Maintains backward compatibility with older Pico versions
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
- * @version 2.1
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
+ * @version 3.0
  */
-class PicoMainCompatPlugin extends AbstractPicoCompatPlugin
+class MainPlugin extends AbstractPlugin
 {
     /**
      * Load's config.php from Pico's root and config dir
@@ -36,11 +44,11 @@ class PicoMainCompatPlugin extends AbstractPicoCompatPlugin
      * {@see Pico::loadConfig()}. `onConfigLoaded` is triggered later, thus we
      * use the `onPluginsLoaded` event.
      *
-     * @see PicoMainCompatPlugin::loadScriptedConfig()
+     * @see MainPlugin::loadScriptedConfig()
      *
      * @param object[] $plugins loaded plugin instances
      */
-    public function onPluginsLoaded(array $plugins)
+    public function onPluginsLoaded(array $plugins): void
     {
         // deprecated since Pico 1.0
         if (is_file($this->getPico()->getRootDir() . 'config.php')) {
@@ -62,21 +70,18 @@ class PicoMainCompatPlugin extends AbstractPicoCompatPlugin
      * solution. Otherwise we'd have to copy all of Pico's code dealing with
      * special config settings (like making paths and URLs absolute).
      *
-     * @see PicoMainCompatPlugin::onConfigLoaded()
+     * @see MainPlugin::onConfigLoaded()
      * @see Pico::loadConfig()
      *
      * @param string $configFile path to the config file to load
      */
-    protected function loadScriptedConfig($configFile)
+    protected function loadScriptedConfig(string $configFile): void
     {
         // scope isolated require()
-        $includeConfigClosure = function ($configFile) {
+        $includeConfigClosure = static function ($configFile) {
             require($configFile);
-            return (isset($config) && is_array($config)) ? $config : array();
+            return (isset($config) && is_array($config)) ? $config : [];
         };
-        if (PHP_VERSION_ID >= 50400) {
-            $includeConfigClosure = $includeConfigClosure->bindTo(null);
-        }
 
         $scriptedConfig = $includeConfigClosure($configFile);
 
@@ -85,7 +90,7 @@ class PicoMainCompatPlugin extends AbstractPicoCompatPlugin
             $picoConfigReflector = $picoReflector->getProperty('config');
             $picoConfigReflector->setAccessible(true);
 
-            $config = $picoConfigReflector->getValue($this->getPico()) ?: array();
+            $config = $picoConfigReflector->getValue($this->getPico()) ?: [];
             $config += $scriptedConfig;
 
             $picoConfigReflector->setValue($this->getPico(), $config);
@@ -95,8 +100,8 @@ class PicoMainCompatPlugin extends AbstractPicoCompatPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
-        return PicoDeprecated::API_VERSION_3;
+        return PicoDeprecated::API_VERSION_4;
     }
 }

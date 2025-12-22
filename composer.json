@@ -3,7 +3,7 @@
     "type": "pico-plugin",
     "description": "This is Pico's official PicoDeprecated plugin. Pico is a stupidly simple, blazing fast, flat file CMS.",
     "keywords": [ "pico", "picocms", "picocms-plugin", "pico-deprecated", "compatibility", "deprecation" ],
-    "homepage": "http://picocms.org/",
+    "homepage": "https://picocms.org/",
     "license": "MIT",
     "authors": [
         {
@@ -13,7 +13,7 @@
         },
         {
             "name": "The Pico Community",
-            "homepage": "http://picocms.org/"
+            "homepage": "https://picocms.org/"
         },
         {
             "name": "Contributors",
@@ -21,16 +21,20 @@
         }
     ],
     "support": {
-        "docs": "http://picocms.org/plugins/deprecated/",
+        "docs": "https://picocms.org/plugins/deprecated/",
         "issues": "https://github.com/picocms/pico-deprecated/issues",
         "source": "https://github.com/picocms/pico-deprecated"
     },
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=7.2.5",
         "picocms/pico": "self.version"
     },
     "autoload": {
-        "classmap": [ "PicoDeprecated.php", "lib/", "plugins/" ]
+        "psr-0": { "PicoDeprecated": "" },
+        "psr-4": {
+            "picocms\\PicoDeprecated\\": "lib/",
+            "picocms\\PicoDeprecated\\Plugin\\": "plugins/"
+        }
     },
     "extra": {
         "branch-alias": {

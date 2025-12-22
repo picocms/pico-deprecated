@@ -4,7 +4,7 @@
  * in the version control history of the file, available from the following
  * original location:
  *
- * <https://github.com/picocms/pico-deprecated/blob/master/plugins/PicoThemeApi1CompatPlugin.php>
+ * <https://github.com/picocms/pico-deprecated/blob/master/plugins/ThemeApi1Plugin.php>
  *
  * This file was created by splitting up an original file into multiple files,
  * which in turn was previously part of the project's main repository. The
@@ -18,32 +18,40 @@
  * License-Filename: LICENSE
  */
 
+declare(strict_types=1);
+
+namespace picocms\PicoDeprecated\Plugin;
+
+use picocms\PicoDeprecated\AbstractPlugin;
+use PicoDeprecated;
+use Twig\Error\LoaderError as TwigLoaderError;
+
 /**
  * Maintains backward compatibility with themes using API version 1, written
  * for Pico 1.0
  *
  * @author  Daniel Rudolf
- * @link    http://picocms.org
- * @license http://opensource.org/licenses/MIT The MIT License
- * @version 2.1
+ * @link    https://picocms.org
+ * @license https://opensource.org/licenses/MIT The MIT License
+ * @version 3.0
  */
-class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
+class ThemeApi1Plugin extends AbstractPlugin
 {
     /**
-     * This plugin extends {@see PicoThemeApi2CompatPlugin}
+     * This plugin extends {@see ThemeApi2Plugin}
      *
      * @var string[]
      */
-    protected $dependsOn = array('PicoThemeApi2CompatPlugin');
+    protected $dependsOn = [ ThemeApi2Plugin::class ];
 
     /**
      * Lowers the page's meta headers
      *
-     * @see PicoThemeApi1CompatPlugin::lowerFileMeta()
+     * @see ThemeApi1Plugin::lowerFileMeta()
      *
      * @param string[] &$meta parsed meta data
      */
-    public function onMetaParsed(array &$meta)
+    public function onMetaParsed(array &$meta): void
     {
         $this->lowerFileMeta($meta);
     }
@@ -51,11 +59,11 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
     /**
      * Lowers the page's meta headers
      *
-     * @see PicoThemeApi1CompatPlugin::lowerFileMeta()
+     * @see ThemeApi1Plugin::lowerFileMeta()
      *
      * @param array &$pageData data of the loaded page
      */
-    public function onSinglePageLoaded(array &$pageData)
+    public function onSinglePageLoaded(array &$pageData): void
     {
         // don't lower the file meta of the requested page,
         // it was already lowered during the onMetaParsed event
@@ -67,13 +75,13 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
     }
 
     /**
-     * Handles .html Twig templates and re-introcudes the Twig variables
+     * Handles .html Twig templates and re-introduces the Twig variables
      * rewrite_url and is_front_page
      *
      * @param string &$templateName  file name of the template
      * @param array  &$twigVariables template variables
      */
-    public function onPageRendering(&$templateName, array &$twigVariables)
+    public function onPageRendering(string &$templateName, array &$twigVariables): void
     {
         if (!isset($twigVariables['rewrite_url'])) {
             $twigVariables['rewrite_url'] = $this->getPico()->isUrlRewritingEnabled();
@@ -88,19 +96,18 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
 
         // API v2 requires themes to use .twig as file extension
         // try to load the template and if this fails, try .html instead (as of API v1)
-        $templateNameInfo = pathinfo($templateName) + array('extension' => '');
+        $templateNameInfo = pathinfo($templateName) + [ 'extension' => '' ];
         $twig = $this->getPico()->getTwig();
 
         try {
-            $twig->loadTemplate($templateName);
-        } catch (Twig_Error_Loader $e) {
+            $twig->load($templateName);
+        } catch (TwigLoaderError $e) {
             if ($templateNameInfo['extension'] === 'twig') {
                 try {
-                    $twig->loadTemplate($templateNameInfo['filename'] . '.html');
+                    $twig->load($templateNameInfo['filename'] . '.html');
 
                     $templateName = $templateNameInfo['filename'] . '.html';
-                    $templateNameInfo['extension'] = 'html';
-                } catch (Twig_Error_Loader $e) {
+                } catch (TwigLoaderError $e) {
                     // template doesn't exist, Twig will very likely fail later
                 }
             }
@@ -115,12 +122,12 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
      *
      * @param array &$meta meta data
      */
-    protected function lowerFileMeta(array &$meta)
+    protected function lowerFileMeta(array &$meta): void
     {
         $metaHeaders = $this->getPico()->getMetaHeaders();
 
         // get unregistered meta
-        $unregisteredMeta = array();
+        $unregisteredMeta = [];
         foreach ($meta as $key => $value) {
             if (!in_array($key, $metaHeaders)) {
                 $unregisteredMeta[$key] = &$meta[$key];
@@ -147,7 +154,7 @@ class PicoThemeApi1CompatPlugin extends AbstractPicoCompatPlugin
     /**
      * {@inheritDoc}
      */
-    public function getApiVersion()
+    public function getApiVersion(): int
     {
         return PicoDeprecated::API_VERSION_3;
     }
