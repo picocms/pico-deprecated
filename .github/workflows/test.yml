@@ -24,6 +24,10 @@ jobs:
                     - '7.4'
                     - '8.0'
                     - '8.1'
+                    - '8.2'
+                    - '8.3'
+                    - '8.4'
+                    - '8.5'
                     - 'nightly'
             fail-fast: false
 
@@ -34,7 +38,7 @@ jobs:
 
         steps:
             -   name: Checkout repository
-                uses: actions/checkout@v2
+                uses: actions/checkout@v6
 
             -   name: Setup PHP ${{ env.PHP_VERSION }}
                 uses: shivammathur/setup-php@v2
@@ -52,7 +56,7 @@ jobs:
                     echo "COMPOSER_CACHE_DIR=$COMPOSER_CACHE_DIR" | tee -a "$GITHUB_ENV"
 
             -   name: Restore Composer cache
-                uses: actions/cache@v2
+                uses: actions/cache@v5
                 with:
                     path: ${{ env.COMPOSER_CACHE_DIR }}
                     key: ${{ runner.os }}-composer-php${{ env.PHP_VERSION }}
